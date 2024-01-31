@@ -1,0 +1,6 @@
+Battery Programmer I/O Board Theroy Of Operation
+
+1. Overview
+	The I/O board is designed as a shield for an Arduino Mega 2650 board.
+	It provides the electrical interface to the various batteries, as well as other functions
+	detailed below.

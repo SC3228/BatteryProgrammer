@@ -1,0 +1,101 @@
+Questions for Joe on BattProgrammer V2 Code:
+
+Up to line 1064.ino
+
+1. Can you explain FWupdate() routine?
+
+2. Can you explain Validate_EEPROM() routine?
+
+3. Explain ValidatePPP() Routine
+
+4. Lines 65-90 EEProm.c:
+    
+    // Check for chip in shutdown mode
+	inch = Wire.read();
+	if (!(inch & 1))
+		Serial.println("ERROR: Temp chip was not in shutdown mode!");
+    
+    // Enable temp reads
+	Wire.beginTransmission((uint8_t)Batts[BatteryType].TempAddress); // Set pointer to config register
+	if (Wire.write(1) != 1 || Wire.write(0) != 1) // Send address and config
+	{
+		Serial.println("Error setting config");
+		Wire.endTransmission();    // Stop transmitting
+		return (ret);
+	}
+	Wire.endTransmission();    // stop transmitting
+
+	delay(500); // Wait a bit for temp reads
+
+	// Get temp
+	Wire.beginTransmission((uint8_t)Batts[BatteryType].TempAddress); // Set pointer to temp reg
+	if (Wire.write(0) != 1) // Send address
+	{
+		Serial.println("Error writing config address");
+		Wire.endTransmission();    // Stop transmitting
+		return (ret);
+	}
+	Wire.endTransmission();    // stop transmitting
+
+	
+	5. Lines 1024 - 1045 .ino
+	
+	case LOAD_HEX:  // Load buffer
+		// Clear valid data flags
+		ClearValid();
+		if (!BatteryType)
+			NoType();
+		else // Good to go
+		{	// Check for need to ask which kind of file this is
+			if (Batts[BatteryType].CryptoAddress && Batts[BatteryType].EEPROM_Address)
+			{
+				if (GetAuthEEPROM())
+					HEX_Read(Batts[BatteryType].Size);
+				else
+					HEX_Read(MAX_AUTH_SIZE);
+			}
+			else if (Batts[BatteryType].CryptoAddress)
+					HEX_Read(MAX_AUTH_SIZE);
+			else
+					HEX_Read(Batts[BatteryType].Size);
+			}
+			break;
+
+6.  Lines 1408-1428 .ino
+
+	// Chek battery voltage
+	// Returns true if error for low voltage
+	// False if voltage is OK
+	bool CheckVoltage(bool ForceCheck)
+	{
+		if (NoCheckVoltage && !ForceCheck)
+			return (0);
+
+		if ((!Batts[BatteryType].ActiveClk // If passive clk drive
+				|| Batts[BatteryType].GasGaugeAddress // or using a gas gauge
+				|| Batts[BatteryType].CryptoAddress) // or using an auth chip
+				&& BattVoltage() <= Batts[BatteryType].MinVoltage) // And battery is <= minimum voltage
+		{
+			LowBatt();
+			return (true);
+		}
+
+		return (false);
+	}
+
+7. What is SetFullSleep()?  GG_SetFullSleep
+
+8. What is GG recover from ROM mode?
+
+9. DoChecksum? 
+	// Function to calculate a checksum
+	uint8_t DoChecksum(uint8_t *Start, uint8_t * End)
+	{
+		uint8_t *pnt;
+		uint8_t csum = 0;
+
+		for (pnt = Start; pnt <= End; ++pnt)
+			csum += *pnt;
+
+		return (csum);
+	}

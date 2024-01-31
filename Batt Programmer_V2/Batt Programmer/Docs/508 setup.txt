@@ -1,0 +1,4 @@
+1. I2C address = 0xC0
+2. Chip mode = 0x06
+	TTL enable = 1 (VCC based VIN H/L)
+	Watchdog Duration = 1 (10 sec.)

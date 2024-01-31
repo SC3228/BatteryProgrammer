@@ -1,0 +1,6 @@
+Support Central Emc-RVHW46 rvhw46@zebra.com
+
+Software
+1. Add support for FUBs.
+
+

@@ -1,0 +1,36 @@
+What GG memory is saved during a gg update is controlled by a .cfg file.
+
+CFG file properties
+	1. .cfg files are simple text files.
+	2. They must use the Windows line endings.
+	3. They contain a list of commands documented below.
+	4. Blank lines are ignored provided they have nothing in them, including any white space
+
+CFG Commands
+	1. "Commands" are always a single ASCII character.
+	2. The command is always the first character in the line.
+	3. White space is ignored.
+	4. Commands are case sensitive.
+	5. Any non numeric digits after the last parameter are ignored
+
+Supported commands
+	1.	'#' Comment. Everything after the '#' is ignored.
+
+	2.	'P' Preserve. Indicates a range of bytes to preserve.
+		Folllowed by two decimal numbers seperated by a comma.
+		The first number is the offset from the base memory address
+		and the second is the number of bytes to preserve starting at that address.
+		The offset must be less than 2048 and the total of bytes saved in the whole
+		file must be below 2000
+
+		Example, save 32 bytes starting at offset 42:  P 42,32
+
+	3. 'T' Totals, Check the total bytes saved as a check for file integrity.
+		Folllowed by two decimal numbers seperated by a comma.
+		The first number is the number of memory "chunks" being preserved
+		and the second is the total number of bytes to preserve.
+		Any 'P' commands after this cause an error.
+
+		Example, 17 memory chunks totaoling 42 bytes in file:  T 17,42
+
+

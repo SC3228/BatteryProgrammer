@@ -1,0 +1,8 @@
+i2c_dev /dev/i2c-1
+i2c_address 194
+3 b'\x00'
+llllllll
+3 b'\x03\x07\x02\x82@\x00\t\xa4'
+llllllll
+3 b'\x01'
+llllllll

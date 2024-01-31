@@ -1,0 +1,96 @@
+1.25	Eliminated old code that used PULL_ENB pin
+
+1.24	Improved the speed of large EEPROM read/writes
+		for COMET batts.
+
+1.23	Removed Frozone EEPROM battery type, not needed.
+		Fixed VBD saying Comet batt was OK if EEPROM failed
+		Fixed a bug in the printing of the new VT cell ident data
+
+1.22	Added support for VT 16KB EEPROM data
+
+1.21	Fixed an issue where the battery temp values were unsigned
+
+1.20	Cleaned up the V2 PP+ show data stuff
+		Fixed GG current being an unsigned instead of signed
+		Added test of RRM (Recover ROM mode) command
+
+1.19	Added a function to set the timestamp to 31 days past the QMAX_DAY
+		value to force a calibration.
+		Added display of QMAXDOD to DGG command
+		Fixed address of GG in ROM mode
+		Fixed ROM mode gauge update
+
+1.18	Fixed a bug in the read of QMAX_DAY which would overwrite the next
+		30 bytes of data.
+		Added a check for the gas gauge in PP+ batts being unsealed when you
+		do a VBD command.
+		Added descriptions to known addresses for scan bus command.
+
+1.17	Added support for showing the time since first use and Qmax day
+		for new gas gauge batts.
+		Added support for reading the temp from the MPA2 temp chip.
+		Added UHD "Update hex data" command to auto update battery data
+
+1.16	Small changes to gas gauge update function after code review.
+		Fixed an issue in displaying the time in temp/cap ranges
+
+1.15	Changed to combined key arrays to be able to use a common
+		key file with Android, the battery programming box and ZBAT.
+		Seperated out the battery type data to a new .cpp and include file
+		to make maintaing the list and using the code on BattProgLib simpler.
+		Added checking/printing of V2 PP+ cell identification data
+		Modified the update gas gauge function as per requests from Chris P.
+
+1.14	Finished GG drive strength function.
+		Changed V2 pullups from 3.3V to Vbatt
+
+1.13	Fixed green LED during gas gauge update.
+		Started adding drive strength function.
+
+1.12	Added display of health and acc chgr records to V2 batts.
+		Added busy LED indication to all file acceses.
+
+1.11	Fixed green LED during file save
+		Removed sync command, not needed.
+		Removed extra check of data block 3 from V2 validation.
+		Added format disk command
+
+1.10	Added I2C drive strength setting to GG update function
+
+1.9		Added code to call firmware update when Zebra internal
+		code is loaded into a JDM box
+
+1.8		Claned up printing of resetting message on UF command
+		Added "SB" command to scan the I2C bus
+		Added "UGG" command to program a .fs file.
+		Added update auth for PP+ V2 batts
+		Cleaned up JDM version selection macros
+
+1.7		Added SharePoint link to startup and help messages
+
+1.6		Added support for update battery command to PP+ V2 batts.
+		Changed help text for update firmware command to show UF iinstead of LF.
+
+1.5		Added automatcally ask for battery type on battery insertion.
+		Added SN and HW version to inital startup message
+		Added flag to tell if batttery should have a thermistor.
+		Split out the battery data table to a seperate .h file
+		Added a fix for 0 byte read errors. Restarted the FAT filesystem
+		before every read/write/dir listing to resync it flash image.
+		Added code to force JDM mode on invalid serial number.
+
+1.4		Did a work around for bytes of 0 returned on file reads
+
+1.3		Changed name to BattProgV2
+		removed all use of F() for storing strings in flash. Not needed for ARM architecture
+		General clean up.
+		Added a prompt before restarting to load new firmware
+
+1.2		Changed SN and HW rev storage. SN is now first two bytes of slot 0. HW rev is first 2 bytes of slot 1
+
+1.1		Changed thermistor pull up from 33K to 5.1K to support BLE battery micro
+		Changed relays to only be on when we have a battery inserted, and a valid battery type
+		Improved help menu readability
+
+1.0		Conversion from Arduino Mega version 2.19 to Adafruit M4 Express

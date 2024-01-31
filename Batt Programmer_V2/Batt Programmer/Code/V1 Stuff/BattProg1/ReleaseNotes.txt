@@ -1,0 +1,222 @@
+2.16	Added initial support for displaying Hawkeye battery data
+
+2.15	Added support for dggf and sggf commands to PP+ V2 batts.
+
+2.14	Fixed a typo in the MV2 command that set the initial data rev to 10 instead of 1.
+		Added addtional format version checking to PPV2 validation.
+
+2.13	Added code to "manufacture" PP+ V2 batts
+		Added full unseal command
+
+2.12	Initial released support for PP+ V2 batts.
+		Reduced code size by simplifying validation error messages.
+		Simplified display of GG registers.
+		Reduced code size by using common flash based messages where possible.
+		Added display data for MPA2 smart batts
+
+2.11	Changed all auth chip batts to use 632 byte hex files.
+
+2.10	Fixed display of full available capacity, it was showing nominal available capacity.
+
+2.9		Cleaned up messages when checking PP+ factory static block.
+		Fixed missing check of startup voltage when checking Pollux data.
+		Added checking of PP SD660 data stored in PP+ areas
+		Added text in verbose mode for EEPROM block allocation testing.
+
+2.8		Added more verbose text when validating MPA2 and Hawkeye batts.
+		Force JDM mode to always be non-verbose.
+ 
+2.7		Added more verbose text messages when validating Pollux data.
+		Fixed a bug that disabled auth chip serial number checks by default.
+		Added message when battery fails validation, so you don't miss it.
+
+2.6		Moved Elektra batts from Falcon to Sentry type.
+
+2.5		Fixed Sentry checking of Pollus data.
+
+2.4		Fixed handling of Sentry batts to account for split in data
+		from EEPROM and Auth chip.
+		Added support for showing size of both auth and EEPROM on
+		batts that have both, reguardless of where data is stored.
+		Added code to check if files being loaded are for auth or EEPROM
+		to properly check for hex file size.
+
+2.3		Fixed problem with hex file read from serial using
+		WaitForKey() to get chars.
+
+2.2		Added temp command to fix new gauge test batts "ID" block.
+		Minor fixups found while converting code for Python lib.
+		Added seperate VT_Valid flag.
+		Added checks for rev 2 VT data format
+		Fix for SD fat lib changing GetFileName to GetName
+		Cleanup in VT data "Show"
+		Added 'Update' function for VT batts
+
+2.1		Value tier data format support finished
+		Stored builtin auth chip SN string to remove need to read it every time.
+
+2.0		Inital support for the new gas gauge
+		Inital VT support (Support for 632 byte auth data)
+
+1.44	Added a check for the record type when validating the Pollux battery health data record.
+
+1.43	Added display of 1725 temp limits to Pollux and PP+ data.
+
+1.42	Fixed a bug where the sunrise key was being used on Frenzy batts
+
+1.41	Cleaned up printing of cell ident data, masked
+		non-printable characters.
+
+1.40	Added extra battery names to select battery type list.
+		Added support for Frozone EEPROM
+
+1.39	Fixed a bug that was not updating the part number/rev in Pollux batts
+		when doing an update EEPROM.
+
+1.38	Added WA command to Falcon/Ironman batts.
+		Removed unneeded battery types: sentry auth. beast auth & EEPROM,
+		Lightning auth
+		Added Galactus battery type. Only uses auth chip. no EEPROM support.
+
+1.37	Added Ship Mode data display/checking
+
+1.36	Fixed display of QC serial number data
+
+1.35	Added seal/unseal gas gauge commands.
+
+1.34	Added support for MC95 display batts.
+
+1.33	Added ability to overide check of auth chip serial number.
+		Skipped monotonic counters and last use key in auth config check.
+
+1.32	Added display of current from gas gauge in DGG command.
+
+1.31	Added Lightning Auth Chip battery type
+
+1.30	Added display of JEITA data to DPP+ command
+
+1.29	Re-factored auth code to save some flash/ram space.
+		Added SAD command to dump all auth chip checking data
+
+1.28	Fixed Pollux batts to be 512 bytes not 256
+
+1.27	Added a warning when trying to overwrite a battery about un-making it.
+		Added code to flush buffer before doing a VBD command so old data is not
+		checked after a bad read.
+		Replaced reset with unseal to exit sealed mode.
+		Added commands to access Auth chip config area and keys/sigs used
+		during the authentication process.
+
+1.26	Removed the scrolling numbers when reading/writing the EEPROM/Auth chip
+		Went to Verbose mode on as the default
+
+1.25	Added DGGF - Dump gas gauge flash as hex file
+		Added SGGF - Save gas gauge flash as hex file
+
+1.24	Added OLV - Override low voltage check command
+		Added Verbose mode
+		Added VERB - Toggle verbose mode command
+
+1.23	Changed minimum battery voltage to 3.3V to leave margin
+		for I2C port detecting a high level. (Min in high is 3V@5V VCC)
+		Changed the validate command to be VBD - Validate battery data
+		Added check for battery connected on power up
+
+1.22	Added status command
+		Removed status from help menu
+		Added ability to select "no battery" to disconnect
+		the I2C pullups.
+
+1.21	Added command to set the FULLSLEEP bit
+		Added command to show version information
+		Modified some command names to make them simpler to remember 
+
+1.20	Added commands to display the gas gauge registers
+		Added command to hibernate the gas gauge
+		Added code to detect battery in/out
+		Added command to reset the gas gauge
+
+1.19	Added "for internal use only" message
+
+1.18	Fixed an error where verifies did not get called if
+		the buffer was non-blank
+		Removed extra call to FlushBuffer() in read file function
+
+1.17	Added display of seconds since first use
+		Fixed a bug in the SD660 area checksum calculation
+		Cleaned up the "Continue Operation" question look.
+		Added code to show used/free blocks checked
+		Changed message for unprogrammed manf blocks to say "Note"
+		Fixed message for no ID in block 2, had said blk1
+		Put more status messages during PP+ validation
+		Fixed display of SD660 data
+		Fixed checking of free data blocks
+		Fixed display of ident data
+
+1.16	Added UVLO, OVLO, and cutoff voltage to SD660 area printout
+		Expanded allowed characters in file names
+		Added ESC for cancel in GetFileName()
+		Added initial cut at "Manufacture Battery"
+		Changed GetFileName to GetText
+		Fixed a bug that caused the unencrypted data from the
+		SDM660 and Ident blocks to be used when the blocks
+		were marked as free. This caused free block errors
+		in blocks 14 and 15.
+		Fixed a bug where the command buffer Buf[] in Loop() was not
+		declared static, and not initialized properly
+
+1.15	Fixed display PP+ data not failing on blank EEPROM
+
+1.14	First "JDM" version
+
+1.13	Modified help menu to show auth data read write
+		commands for any battery with an auth chip
+		Added code to return a failed status when user
+		continues validation after any failure
+
+1.12	Added "KeepGoing" function to allow validation
+		to continue on an error if user wants
+		Added code to check for a blank buffer
+		before certain operations
+		Added validation of Hawkeye data
+		Fixed a bug in Pollux validation that skipped
+		checking the checksum on the charger control data
+		Redisplayed current command line buffer after
+		getting an SD card In/Out message
+
+1.11	Added display of Pollux/8956 data
+		Added display of 660 data in PP+ area
+		Changed battery validation to use data already
+		in buffer instead of reading from chip
+
+1.10	Fix for Beast showing too much hex data
+		Fix for stuck TWI when batt is removed/replaced
+		Added Pollux/8956 data validation
+
+1.9 Added initial support for Beast
+
+1.8	Added code to limit JDM device capability
+	Added validation of PP+ data
+	Added in GG reg read
+
+1.7 Added framework for validate data support.
+	Removed checking of slot 8 for default data.
+	Removed check for blank OTP area.
+	Fixed extra "Passed" when checking crypto chip config.
+
+1.6	Fixed bug that prevented directory command from working
+	Added EEPROM update support
+
+1.5	Added bounds checking on hex reads
+
+1.4	Added multiple character commands.
+
+1.3	Added defs for all the battery type numbers in BattProg.h
+
+1.2 Added flag for clock switch control needed
+	Added code to check for successful I2C writes
+	Added code to check for a "stuck" clock before transactions
+
+1.1	Added auth data read write
+
+1.0	Initial release

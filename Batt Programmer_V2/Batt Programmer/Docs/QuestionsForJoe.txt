@@ -1,0 +1,38 @@
+Questions for Joe on BattProgrammer V2 Code:
+
+Up to line 788.ino
+
+1. Can you explain FWupdate() routine?
+
+2. Can you explain Validate_EEPROM() routine?
+
+3. Explain ValidatePPP() Routine
+
+4. Line 65-90 EEProm.c:
+    
+    // Check for chip in shutdown mode
+	inch = Wire.read();
+	if (!(inch & 1))
+		Serial.println("ERROR: Temp chip was not in shutdown mode!");
+    
+    // Enable temp reads
+	Wire.beginTransmission((uint8_t)Batts[BatteryType].TempAddress); // Set pointer to config register
+	if (Wire.write(1) != 1 || Wire.write(0) != 1) // Send address and config
+	{
+		Serial.println("Error setting config");
+		Wire.endTransmission();    // Stop transmitting
+		return (ret);
+	}
+	Wire.endTransmission();    // stop transmitting
+
+	delay(500); // Wait a bit for temp reads
+
+	// Get temp
+	Wire.beginTransmission((uint8_t)Batts[BatteryType].TempAddress); // Set pointer to temp reg
+	if (Wire.write(0) != 1) // Send address
+	{
+		Serial.println("Error writing config address");
+		Wire.endTransmission();    // Stop transmitting
+		return (ret);
+	}
+	Wire.endTransmission();    // stop transmitting

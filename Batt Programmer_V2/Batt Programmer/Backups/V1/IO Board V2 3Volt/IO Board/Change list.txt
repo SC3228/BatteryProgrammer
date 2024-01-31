@@ -1,0 +1,66 @@
+Changes for 5/5/20
+1. Changed the values of R17 and R22 to reflect the actual values of the .1% resistors chosen
+
+2. Updated schematic version to 2.5, no board changes.
+
+Changes for 5/1/20
+1. Removed spare relay connections from J1
+
+2. Added a thermistor connection to J1 going thru relay K4
+
+3. Added a 33K pullup and a filter cap to the "inside" thermistor connection to the A to D
+
+4. General cleanup, removed 'T' junctions and right angle traces
+
+5. Updated vession to 2.4
+
+Changes for 4/27/20
+1. Added description for 3.3V regulator
+
+2. Updated version to 2.3.
+
+
+Changes for 4/8/20 part deux
+1. Corrected relay part numbers on schematic.
+
+2. Added note on relay contact ratings.
+
+3. Updated version to 2.2.
+
+
+Changes for 4/8/20
+1. Flipped diodes connected to relay coils
+
+2. Reconnect +5 and Gnd to U2 which were disconnected when part was moved.
+
+3. Updated version to 2.1
+
+
+Changes for 3/18/20
+1. Forget to note the addition of 3.3V voltage referance at U8.
+
+2. Forgot to note the addition of R17 and R22. Used to divide the battery voltage to a level under the above referance voltage.
+
+3. Removed R2, (Pull down on Batt+) not needed because of above change.
+
+4. Rearanged the connections to K1 to simplify board routing.
+
+
+Changes from V1 3/12/20
+1. Relays K1, K2, K3 were added to isolate the unit from the outside connections until the unit was powered up and ready to go.
+	a. This eliminates the need to remove a connected battery from the device to allow it to finsh powering up, which is currently the case.
+	b. This also allows the device to do an extensive self test on power up.
+
+2. Added load resistors R3, R12, and connected the clock and data signals to analog inputs to allow for self testing.
+	a. The self test can verify the function of the pullup voltage select mux
+	b. The test can also check the function of the pullup resistor selection and the resistor values
+	c. This also eliminates the need for a seperate test box to check new units.
+
+3. An extra relay with it's contacts brought out to additional terminals was added for future expansion.
+	a. This could be used for switching a load or charger on/off as part of an automated test
+	b. It could also be used to trigger a scope/data logger as part of a test.
+
+4. A 100K pulldown was added on Batt+
+	a. This was done as a rework on V1
+	b. Needed to prevent detecting a battery due to voltage float on the line with nothing connected.
+

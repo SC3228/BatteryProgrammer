@@ -1,0 +1,28 @@
+Drill report for C:\Users\XQVH76\Documents\KiCad\Projects\IO Board\IO Board.kicad_pcb
+Created on 11/29/2017 1:31:01 PM
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  In1.Cu                    inner1
+    L3 :  In2.Cu                    inner2
+    L4 :  B.Cu                      back
+
+
+Drill file 'IO Board.drl' contains
+    plated through holes:
+    =============================================================
+    T1  0.38mm  0.015"  (60 holes)
+    T2  1.02mm  0.040"  (86 holes)
+    T3  1.02mm  0.040"  (4 holes)
+
+    Total plated holes count 150
+
+
+Drill file 'IO Board-NPTH.drl' contains
+    unplated through holes:
+    =============================================================
+    T1  1.10mm  0.043"  (1 hole)
+    T2  1.50mm  0.059"  (2 holes)
+
+    Total unplated holes count 3

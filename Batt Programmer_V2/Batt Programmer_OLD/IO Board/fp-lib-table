@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name BattProg)(type KiCad)(uri ${KIPRJMOD}/BattProg.pretty)(options "")(descr ""))
+  (lib (name Feather)(type KiCad)(uri "D:/OneDrive - Zebra Technologies/Work/Battery Stuff/Batt Programmer/IO Board/Feather")(options "")(descr ""))
+)

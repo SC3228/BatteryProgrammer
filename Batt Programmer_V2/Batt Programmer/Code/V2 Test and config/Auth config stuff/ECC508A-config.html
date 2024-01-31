@@ -1,0 +1,2992 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>ATECC508A Configuration Editor</title>
+        <style type="text/css">
+            #config-table td {
+                vertical-align: top;
+            }
+            .range-start {
+                text-align: right;
+            }
+            .range-sep {
+                text-align: center;
+            }
+            .range-stop {
+                text-align: right;
+            }
+            .range-single {
+                text-align: right;
+            }
+            tr.config16 {
+                background-color: #DDDDDD;
+            }
+            tr.update-extra {
+                background-color: #DDDDDD;
+            }
+            tr.lock {
+                background-color: #DDDDDD;
+            }
+            th {
+                text-align: left;
+            }
+            .config-disabled {
+                color: #AAAAAA;
+            }
+            .config-note {
+            }
+            .config-warning {
+            }
+            .config-error {
+            }
+            a.detail-toggle {
+                padding-left: 0.1in;
+                padding-right: 0.1in;
+                color: #0000FF;
+            }
+            .details {
+                display: none;
+            }
+            .error-icon {
+                visibility: hidden;
+            }
+            .warning-icon {
+                visibility: hidden;
+            }
+            textarea.comments {
+                overflow-x: hidden; /* Firefox reserves space for a horizontal scroll bar, effectively adding an extra line. This prevents that. */
+                font-family: sans-serif;
+                font-size: 10pt;
+            }
+            
+            .table-header-rotated {
+                border-collapse: collapse;
+            }
+            .csstransforms .table-header-rotated td {
+                /*width: 30px;*/
+            }
+            .no-csstransforms .table-header-rotated th {
+                /*padding: 5px 10px;*/
+            }
+            .table-header-rotated td {
+                text-align: center;
+                /*padding: 10px 5px;*/
+                border: 1px solid #ccc;
+            }
+            .csstransforms .table-header-rotated th.rotate {
+                height: 140px;
+                white-space: nowrap;
+            }
+            .csstransforms .table-header-rotated th.rotate > div {
+                -webkit-transform: translate(15px, 51px) rotate(315deg);
+                -ms-transform: translate(15px, 51px) rotate(315deg);
+                transform: translate(15px, 51px) rotate(315deg);
+                width: 30px;
+            }
+            .csstransforms .table-header-rotated th.rotate > div > span {
+                border-bottom: 1px solid #ccc;
+                padding: 5px 10px;
+            }
+            .table-header-rotated th.row-header {
+                padding: 0 10px;
+                border-bottom: 1px solid #ccc;
+            }
+            .slot-num {
+                font-size: 0.5in;
+                overflow: hidden;
+                white-space: nowrap;
+                height: 0in;
+            }
+        </style>
+    </head>
+    <body onload="initConfigurator()">
+        <div id="templates" style="display:none">
+            <svg
+                xmlns:svg="http://www.w3.org/2000/svg"
+                xmlns="http://www.w3.org/2000/svg"
+                version="1.1"
+                viewBox="0 0 75 75"
+                width="0.2in"
+                height="0.2in">
+                <g id="note-icon" transform="translate(-251.00685,-521.06158)">
+                    <g>
+                        <rect
+                            width="75"
+                            height="75"
+                            ry="12.591241"
+                            x="251.00685"
+                            y="521.06158"
+                            style="fill:#2077be;fill-opacity:1;stroke:none" />
+                        <g transform="translate(1.7379884,118.00517)">
+                            <path
+                                d="m 291.05021,422.27954 a 0.82074893,0.75761443 0 1 1 -1.6415,0 0.82074893,0.75761443 0 1 1 1.6415,0 z"
+                                transform="matrix(8.5287958,0,0,9.2395289,-2185.9886,-3479.9262)"
+                                style="fill:#ffffff;fill-opacity:1;stroke:none" />
+                            <path
+                                d="m 292.28125,430.71875 -11.125,0.125 a 4.0004,4.0004 0 1 0 0.0937,8 l 1.0625,0 0,20.53125 c 0,3.86599 3.13401,7 7,7 3.86599,0 7,-3.13401 7,-7 l 0,-24 a 4.0004,4.0004 0 0 0 -4.03125,-4.65625 z"
+                                style="fill:#ffffff;fill-opacity:1;stroke:none" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+            <svg
+                xmlns:svg="http://www.w3.org/2000/svg"
+                xmlns="http://www.w3.org/2000/svg"
+                version="1.1"
+                viewBox="0 0 75 75"
+                width="0.2in"
+                height="0.2in">
+                <g id="warning-icon" transform="translate(-346.46448,-443.00934)">
+                    <g>
+                        <rect
+                            width="75"
+                            height="75"
+                            ry="12.591241"
+                            x="346.46448"
+                            y="443.00934"
+                            style="fill:#f39225;fill-opacity:1;stroke:none" />
+                        <g transform="translate(-0.07905746,-92.089092)" style="fill:#ffffff;fill-opacity:1">
+                            <path
+                                d="m 377.78121,579.18279 -1.82176,-20.8608 c -0.34159,-4.06468 -0.51239,-6.98257 -0.51238,-8.75369 -10e-6,-2.40975 0.82548,-4.28969 2.47647,-5.63982 1.65096,-1.35001 3.82379,-2.02505 6.51851,-2.02511 3.26398,6e-5 5.4463,0.86382 6.54697,2.59127 1.10063,1.72757 1.65095,4.21722 1.65098,7.46895 -3e-5,1.91628 -0.13287,3.86155 -0.3985,5.8358 l -2.448,21.4705 c -0.26571,2.55501 -0.83501,4.51479 -1.70792,5.87935 -0.87295,1.36461 -2.31517,2.04691 -4.32669,2.04689 -2.04951,2e-5 -3.47277,-0.6605 -4.26978,-1.98156 -0.79703,-1.32102 -1.36632,-3.33161 -1.7079,-6.03178 z"
+                                style="fill:#ffffff;fill-opacity:1;stroke:none" />
+                            <path
+                                d="m 383.07694,603.29349 c -1.77107,0 -3.31712,-0.57341 -4.63815,-1.72025 -1.32105,-1.14683 -1.98157,-2.75095 -1.98156,-4.81236 -10e-6,-1.80009 0.63148,-3.33162 1.89446,-4.5946 1.26296,-1.26296 2.80901,-1.89444 4.63815,-1.89445 1.82912,10e-6 3.38968,0.63149 4.68171,1.89445 1.29198,1.26298 1.93798,2.79451 1.938,4.5946 -2e-5,2.03237 -0.65328,3.62923 -1.95978,4.79058 -1.30654,1.16136 -2.83081,1.74203 -4.57283,1.74203 z"
+                                style="fill:#ffffff;fill-opacity:1;stroke:none" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+            <svg
+                xmlns:svg="http://www.w3.org/2000/svg"
+                xmlns="http://www.w3.org/2000/svg"
+                version="1.1"
+                viewBox="0 0 75 75"
+                width="0.2in"
+                height="0.2in">
+                <g id="error-icon" transform="translate(-346.86304,-537.06)">
+                    <g>
+                        <rect
+                            width="75"
+                            height="75"
+                            ry="12.591241"
+                            x="346.86304"
+                            y="537.06"
+                            style="fill:#f05133;fill-opacity:1;stroke:none" />
+                        <path
+                            d="m 405.0185,553.94737 -41.31093,41.22526 m 0,-41.22526 41.31093,41.22526"
+                            style="fill:none;stroke:#ffffff;stroke-width:13.68906879;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+                    </g>
+                </g>
+            </svg>
+            
+            <div id="note-msg-template" class="config-note">
+                <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#note-icon"/></svg>
+                <span class="msg-text"></span>
+            </div>
+            
+            <div id="warning-msg-template" class="config-warning">
+                <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                WARNING: <span class="msg-text"></span>
+            </div>
+            
+            <div id="error-msg-template" class="config-error">
+                <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                ERROR: <span class="msg-text"></span>
+            </div>
+        </div>
+        <svg
+            xmlns:svg="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.1"
+            viewBox="0 0 1022.4212 254.09138"
+            height="0.2in">
+            <g transform="translate(325.49632,-356.74506)">
+                <g transform="translate(-325.49632,356.70963)">
+                    <path
+                        d="m 811.59447,99.070869 c 34.12204,0 45.60236,22.287401 49.32283,40.358271 l -101.05512,0 c 6.20079,-25.44095 24.27166,-40.358271 51.73229,-40.358271 m 58.92519,74.090551 31.6063,0 0,-15.55512 c 0,-25.22834 -8.11417,-48.22441 -22.85433,-64.807085 -16.33465,-18.425197 -39.72047,-28.133859 -67.67716,-28.133859 -28.063,0 -52.05118,9.673229 -69.37795,27.921261 -16.08662,16.901573 -24.94489,40.039373 -24.94489,65.019683 0,55.62993 33.44882,96.73229 94.21654,96.51969 50.63385,-0.17716 77.84645,-28.27559 85.2874,-52.01575 l -38.16142,0 -3.01181,0 c -9.7441,13.35827 -27.56693,20.58662 -43.68898,20.05512 -29.90551,-0.92126 -53.29133,-21.9685 -52.22834,-49.00394 l 110.83464,0 z"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="m 1004.7756,29.586615 c -7.15752,0 -12.96854,-5.811024 -12.96854,-12.968504 0,-7.1574808 5.81102,-12.9330715 12.96854,-12.9685046 7.1574,0.035433 12.9685,5.8110238 12.9685,12.9685046 0,7.15748 -5.8111,12.968504 -12.9685,12.968504 m 0,-29.51574886 c -9.14177,0 -16.58271,7.40551206 -16.58271,16.54724486 0,9.141732 7.44094,16.547244 16.58271,16.582677 9.1417,-0.03543 16.5826,-7.440945 16.5826,-16.582677 0,-9.1417328 -7.4409,-16.54724486 -16.5826,-16.54724486"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="m 1006.1929,15.980315 -4.4291,0 0,-4.748031 4.4291,0 c 1.3464,0 2.4449,0.92126 2.4449,2.338583 0,1.452755 -1.063,2.409448 -2.4449,2.409448 m 5.3858,-2.409448 c 0,-2.515749 -1.9488,-4.6771659 -4.8543,-4.6771659 l -7.83073,0 0,15.0590559 2.87013,0 0,-5.704725 3.685,0 4.1457,5.704725 3.5787,0 -4.5354,-6.094489 c 1.8425,-0.708661 2.9409,-2.374016 2.9409,-4.287401"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="m 1003.0393,213.20079 c -5.59838,0 -10.94878,-1.06299 -15.87397,-3.11811 -4.96063,-2.05511 -9.35433,-4.96063 -13.00394,-8.64567 -3.64961,-3.61417 -6.59055,-8.00787 -8.64567,-12.9685 -2.09055,-4.9252 -3.15354,-10.27559 -3.15354,-15.80315 l 0,-172.62992693 -37.02756,0 0,172.59449693 c 0,10.55905 2.05512,20.65748 6.05906,30.04724 4.00393,9.38977 9.67322,17.71654 16.75984,24.83858 7.12204,7.08662 15.48425,12.68504 24.83858,16.68898 9.38976,4.00394 19.52362,6.05906 30.0472,6.05906 l 19.3819,0 0,-37.063 -19.3819,0 z"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="m 687.64959,114.02363 c -4.00394,-9.49607 -9.60236,-17.893706 -16.68898,-25.015753 -7.05118,-7.086615 -15.34252,-12.755906 -24.59055,-16.866143 -9.3189,-4.110236 -19.45275,-6.165354 -30.15354,-6.165354 -12.61417,0 -24.48425,2.905512 -35.18504,8.645669 -8.92913,4.712599 -16.68898,10.984253 -23.17323,18.708662 -6.44882,-7.688976 -14.13779,-13.96063 -22.96063,-18.708662 -10.62992,-5.740157 -22.5,-8.645669 -35.32677,-8.645669 -10.52362,0 -20.62204,2.055118 -29.97637,6.165354 -9.38977,4.110237 -17.68111,9.779528 -24.59056,16.901576 -6.98031,7.122047 -12.50787,15.51969 -16.51181,24.98032 -4.03937,9.49606 -6.05905,19.87795 -6.05905,30.8622 l 0,105.09449 38.16142,0 0,-105.05906 c 0,-5.49212 1.02755,-10.70078 3.01181,-15.51968 2.01968,-4.8189 4.85433,-9.1063 8.39763,-12.75591 3.54331,-3.61417 7.72441,-6.51968 12.47244,-8.5748 4.7126,-2.05512 9.81497,-3.11811 15.16536,-3.11811 5.35039,0 10.52362,1.06299 15.34252,3.11811 4.8189,2.09055 9.07086,4.96063 12.57874,8.5748 3.5433,3.64961 6.37795,7.93701 8.39764,12.75591 2.01968,4.8189 3.04724,10.02756 3.04724,15.51968 l 0,105.05906 38.12598,0 0,-105.05906 c 0,-5.45669 1.02756,-10.70078 3.04725,-15.51968 2.01968,-4.78347 4.85433,-9.1063 8.39763,-12.75591 3.54331,-3.61417 7.72441,-6.51968 12.43701,-8.5748 4.74803,-2.05512 9.8504,-3.11811 15.20079,-3.11811 5.35039,0 10.52362,1.06299 15.34252,3.11811 4.78346,2.05512 9.03543,4.96063 12.57874,8.5748 3.5433,3.64961 6.37795,7.93701 8.39764,12.75591 2.01968,4.78346 3.04724,9.99212 3.04724,15.51968 l 0,105.05906 38.12598,0 0,-105.09449 c 0,-10.98425 -2.01968,-21.36614 -6.05905,-30.8622"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="M 211.14566,0.03543307 0,249.73229 l 44.149605,0 64.700785,-76.1811 74.51575,0 0,-35.39764 -44.43307,0 78.05905,-91.842525 0,203.421265 37.06299,0 0,-249.69685693 -42.90945,0 z"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                    <path
+                        d="m 378.38975,213.20079 c -5.56299,0 -10.91338,-1.02756 -15.83858,-3.11811 -4.96063,-2.05511 -9.3189,-4.96063 -13.00394,-8.64567 -3.6496,-3.61417 -6.59055,-8.00787 -8.6811,-12.9685 -2.05512,-4.9252 -3.11811,-10.27559 -3.11811,-15.80315 l 0,-66.86221 57.9685,0 0,-37.452754 -57.9685,0 0,-68.31496293 -37.06299,0 0,68.31496293 -19.41732,0 0,37.452754 19.41732,0 0,66.82678 c 0,10.55905 2.05512,20.65748 6.09449,30.04724 4.00394,9.38977 9.63779,17.71654 16.75984,24.83858 7.12205,7.08662 15.48425,12.68504 24.83858,16.68898 9.38977,4.00394 19.48819,6.05906 30.01181,6.05906 l 18.28347,0 0,-37.063 -18.28347,0 z"
+                        style="fill:#007ec3;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+                </g>
+            </g>
+        </svg>
+        <span>
+        ATECC508A Configuration Explorer
+        </span>
+        <div style="border-bottom: solid 1px #000000; text-align: right;">
+            ATMEL CONFIDENTIAL - For release only under non-disclosure agreement
+        </div>
+        <table id="config-table">
+            <tr>
+                <th colspan="3">Bytes</th>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-start">0</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">3</td>
+                <td>SN[0:3]</td>
+                <td><input type="text" name="SN03" id="config[0:3]_data"/><br/></td>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-start">4</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">7</td>
+                <td>RevNum</td>
+                <td><input type="text" name="RevNum" id="config[4:7]_data"/></td>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-start">8</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">12</td>
+                <td>SN[4:8]</td>
+                <td><input type="text" name="SN48" id="config[8:12]_data"/></td>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-single" colspan="3">13</td>
+                <td>Reserved13</td>
+                <td><input type="text" name="Reserved13" id="config[13]_hex"/></td>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-single" colspan="3">14</td>
+                <td>I2C_Enable</td>
+                <td>
+                    <input type="text" name="I2C_Enable" id="config[14]_hex" />
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <br/>
+                    
+                    <table class="details">
+                        <tr>
+                            <th colspan="3">Bits</th>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">0</td>
+                            <td>Comm Mode</td>
+                            <td>
+                                <input type="radio" name="I2C_Enable.Mode" id="config[14][0]=0" value="SWI"/>
+                                <label for="config[14][0]=0">[0] Device is operating in single wire mode.</label><br/>
+                                <input type="radio" name="I2C_Enable.Mode" id="config[14][0]=1" value="I2C"/>
+                                <label for="config[14][0]=1">[1] Device is operating in I2C mode.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">1</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">7</td>
+                            <td>Reserved</td>
+                            <td><input type="text" name="I2C_Enable.Reserved17" id="config[14][1:7]_bin"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="config-row config16">
+                <td class="range-single" colspan="3">15</td>
+                <td>Reserved15</td>
+                <td><input type="text" name="Reserved15" id="config[15]_hex"/></td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-single" colspan="3">16</td>
+                <td>I2C_Address</td>
+                <td>
+                    <input type="text" name="I2C_Address" id="config[16]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="I2C_Address-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <table class="details">
+                        <tr>
+                            <th colspan="3">Bits</th>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=0">
+                            <td colspan="5">When device is in single wire mode (I2C_Enable[0] = 0).</td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=0">
+                            <td class="range-start">0</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">1</td>
+                            <td>GPIOMode</td>
+                            <td>
+                                <input type="radio" name="I2C_Address.GPIOMode" id="config[16][0:1]=0_opt1" value="disabled"/>
+                                <label for="config[16][0:1]=0_opt1">[00] Disabled. SCL pin is unused should be tied low on the board.</label><br/>
+                                <input type="radio" name="I2C_Address.GPIOMode" id="config[16][0:1]=1_opt1" value="auth"/>
+                                <label for="config[16][0:1]=1_opt1">[01] Authorization Modes, bit 3 determines chip operation.</label><br/>
+                                <input type="radio" name="I2C_Address.GPIOMode" id="config[16][0:1]=2_opt1" value="input"/>
+                                <label for="config[16][0:1]=2_opt1">[10] Input. Current value on the SCL pin returned by Info command.</label><br/>
+                                <input type="radio" name="I2C_Address.GPIOMode" id="config[16][0:1]=3_opt1" value="output"/>
+                                <label for="config[16][0:1]=3_opt1">[11] Output. SCL may be driven high or low by Info command.</label>
+                                <div class="messages" id="I2C_Address.GPIOMode-messages"></div>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=0">
+                            <td class="range-single" colspan="3">2</td>
+                            <td>GPIODefState</td>
+                            <td>
+                                <input type="checkbox" name="I2C_Address.GPIODefState" id="config[16][2]_opt1"/>
+                                <label for="config[16][2]_opt1">Default state of SCL pin on power-up when configured as an output.</label>
+                                <div class="messages" id="I2C_Address.GPIODefState-messages"></div>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=0">
+                            <td class="range-single" colspan="3">3</td>
+                            <td>GPIOAuthMode</td>
+                            <td>
+                                <input type="radio" name="I2C_Address.GPIOAuthMode" id="config[16][3]=0_opt1" value="output"/>
+                                <label for="config[16][3]=0_opt1">[0] Authorization Output mode. When an authorization is successfully performed on the slot in SignalKey, the SCL pin is asserted.</label><br/>
+                                <input type="radio" name="I2C_Address.GPIOAuthMode" id="config[16][3]=1_opt1" value="intrusion"/>
+                                <label for="config[16][3]=1_opt1">[1] Intrusion Detection mode. Intrusion latch is set via authorization and cleared if SCL falls.</label>
+                                <div class="messages" id="I2C_Address.GPIOAuthMode-messages"></div>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=0">
+                            <td class="range-start">4</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">7</td>
+                            <td>GPIOSignalKey</td>
+                            <td>
+                                <input type="text" name="I2C_Address.GPIOSignalKey" id="config[16][4:7]_dec_opt1"/>
+                                <label for="config[16][4:7]_dec_opt1">If GPIOMode is 01, the slot number for the GPIO authorizing key. For all other modes, must be 0.</label>
+                                <div class="messages" id="I2C_Address.GPIOSignalKey-messages"></div>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=1">
+                            <td colspan="5">When device is in I2C mode (I2C_Enable[0] = 1).</td>
+                        </tr>
+                        <tr data-config-enable="config[14][0]=1">
+                            <td class="range-start">0</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">7</td>
+                            <td>Device Address</td>
+                            <td>
+                                <input type="text" name="I2C_Address.Address" id="config[16]_hex_opt2"/>I2C device address. LSB must be 0.<br/>
+                                <div id="I2C_Address.Address-messages" class="messages"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-single" colspan="3">17</td>
+                <td>Reserved17</td>
+                <td>
+                    <input type="text" name="Reserved17" id="config[17]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <br/>
+                    
+                    <div id="Reserved17-messages" class="messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-single" colspan="3">18</td>
+                <td>OTPmode</td>
+                <td>
+                    <input type="text" name="OTPmode" id="config[18]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="OTPmode-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="details">
+                        <input type="radio" name="OTPmode" id="config[18]=170" value="read-only"/>
+                        <label for="config[18]=170">[0xAA] Read-only Mode: Writes to the OTP zone are forbidden when the OTP zone is locked. Reads of all words are permitted.</label><br/>
+                        <input type="radio" name="OTPmode" id="config[18]=85" value="consumption"/>
+                        <label for="config[18]=85">[0x55] Consumption Mode: Writes to the OTP zone when the OTP zone is locked; causes bits to transition only from a one to a zero. Reads of all words are permitted.</label>
+                    </div>
+                    <div id="OTPmode-messages" class="messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-single" colspan="3">19</td>
+                <td>ChipMode</td>
+                <td>
+                    <input type="text" name="ChipMode" id="config[19]_hex" />
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="ChipMode-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <table class="details">
+                        <tr>
+                            <th colspan="3">Bits</th>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">0</td>
+                            <td>SelectorMode</td>
+                            <td>
+                                <input type="radio" name="ChipMode.SelectorMode" id="config[19][0]=0" value="always-update"/>
+                                <label for="config[19][0]=0">[0] Selector can always be written with the UpdateExtra command.</label><br/>
+                                <input type="radio" name="ChipMode.SelectorMode" id="config[19][0]=1" value="update-zero"/>
+                                <label for="config[19][0]=1">[1] Selector can only be written if it currently has a value of zero.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">1</td>
+                            <td>TTLenable</td>
+                            <td>
+                                <input type="radio" name="ChipMode.TTLenable" id="config[19][1]=0" value="fixed-ref"/>
+                                <label for="config[19][1]=0">[0] Input levels use a fixed reference.</label><br/>
+                                <input type="radio" name="ChipMode.TTLenable" id="config[19][1]=1" value="vcc-ref"/>
+                                <label for="config[19][1]=1">[1] Input levels are VCC referenced.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">2</td>
+                            <td>WatchdogDuration</td>
+                            <td>
+                                <input type="radio" name="ChipMode.WatchdogDuration" id="config[19][2]=0" value="vcc-ref"/>
+                                <label for="config[19][2]=0">[0] tWATCHDOG is 1.3s, nominal. Atmel recommends this for the best security.</label><br/>
+                                <input type="radio" name="ChipMode.WatchdogDuration" id="config[19][2]=1" value="fixed-ref"/>
+                                <label for="config[19][2]=1">[1] tWATCHDOG is 10.0s, nominal.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">3</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">7</td>
+                            <td>Reserved</td>
+                            <td>
+                                <input type="text" name="ChipMode.Reserved" id="config[19][3:7]_bin"/>Must be set to zero.<br/>
+                                <div id="ChipMode.Reserved-messages" class="messages"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="config-row" id="SlotConfig[0]">
+                <td class="range-start">20</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">21</td>
+                <td>SlotConfig[0]</td>
+                <td>
+                    <input type="text" name="SlotConfig[0]" id="config[20:21]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="SlotConfig[0]-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <table class="details">
+                        <tr>
+                            <th colspan="3">Bits</th>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td colspan="5">Slot is not a private key (KeyConfig.Private = 0).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td class="range-start">0</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">3</td>
+                            <td>ReadKey</td>
+                            <td>
+                                <input type="text" name="SlotConfig[0].ReadKey" id="config[20:21][0:3]_dec_opt1"/>Use this keyID to encrypt data being read from this slot using the Read command.<br/>
+                                <div class="messages" id="SlotConfig[0].ReadKey-messages"></div>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td colspan="5">Slot is a private key (KeyConfig[0].Private = 1).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">0</td>
+                            <td>ExternalSigs</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].ExternalSigs" id="config[20:21][0]_opt2"/>
+                                <label for="config[20:21][0]_opt2">External signatures of arbitrary messages are enabled.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">1</td>
+                            <td>InternalSigs</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].InternalSigs" id="config[20:21][1]_opt2"/>
+                                <label for="config[20:21][1]_opt2">Internal signatures of messages generated by CheckMac or GenKey are enabled.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">2</td>
+                            <td>ECDH</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].ECDH" id="config[20:21][2]_opt2"/>
+                                <label for="config[20:21][2]_opt2">ECDH operation is permitted for this key.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">3</td>
+                            <td>WriteMasterSecret</td>
+                            <td>
+                                <input type="radio" name="SlotConfig[0].WriteMasterSecret" id="config[20:21][3]=0_opt2" value="output"/>
+                                <label for="config[20:21][3]=0_opt2">[0] ECDH master secret will be output in the clear.</label><br/>
+                                <input type="radio" name="SlotConfig[0].WriteMasterSecret" id="config[20:21][3]=1_opt2" value="save"/>
+                                <label for="config[20:21][3]=1_opt2">[1] ECDH master secret will be written into slot N+1.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">4</td>
+                            <td>NoMac</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].NoMac" id="config[20:21][4]"/>
+                                <label for="config[20:21][4]">The key in this slot can not be used by the MAC or HMAC commands.</label>
+                                <div class="messages" id="SlotConfig[0].NoMac-messages"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">5</td>
+                            <td>LimitedUse</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].LimitedUse" id="config[20:21][5]"/>
+                                <label for="config[20:21][5]">The key in this slot is "Limited Use".</label>
+                                <div class="messages" id="SlotConfig[0].LimitedUse-messages"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">6</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">7</td>
+                            <td>ReadMode</td>
+                            <td>
+                                <input type="radio" name="SlotConfig[0].ReadMode" id="config[20:21][6:7]=0" value="clear"/>
+                                <label for="config[20:21][6:7]=0">[0] Clear text reads are always permitted from this slot. Slots set to this state should never be used as key storage. Either 4 or 32 bytes may be read at a time.</label><br/>
+                                <input type="radio" name="SlotConfig[0].ReadMode" id="config[20:21][6:7]=2" value="prohibited"/>
+                                <label for="config[20:21][6:7]=2">[2] Reads are never permitted from this slot. Slots set to this state can still be used for key storage.</label><br/>
+                                <input type="radio" name="SlotConfig[0].ReadMode" id="config[20:21][6:7]=3" value="encrypted"/>
+                                <label for="config[20:21][6:7]=3">[3] Reads from this slot are encrypted. The encryption key is in the slot specified by ReadKey. 4-byte reads and writes are prohibited.</label><br/>
+                                <div class="messages" id="SlotConfig[0].ReadMode-messages"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">6</td>
+                            <td>EncryptedRead</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].EncryptedRead" id="config[20:21][6]"/>
+                                <label for="config[20:21][6]">Reads from this slot will be encrypted using the procedure specified in the Read command.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">7</td>
+                            <td>IsSecret</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].IsSecret" id="config[20:21][7]"/>
+                                <label for="config[20:21][7]">The contents of this slot are secret – Clear text reads are prohibited and both 4-byte reads and writes are prohibited.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">8</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">11</td>
+                            <td>WriteKey</td>
+                            <td>
+                                <input type="text" name="SlotConfig[0].WriteKey" id="config[20:21][8:11]_dec"/>Use this keyID to validate and encrypt data written to this slot.<br/>
+                                <div class="messages" id="SlotConfig[0].WriteKey-messages"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">12</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">15</td>
+                            <td>WriteConfig</td>
+                            <td>
+                                <input type="text" name="SlotConfig[0].WriteConfig" id="config[20:21][12:15]_bin"/>Controls the ability to modify the data in this slot.<br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td colspan="5">Slot is not a private key (KeyConfig.Private = 0).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td class="range-single" colspan="3">13</td>
+                            <td>DeriveKey</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].DeriveKey" id="config[20:21][13]_opt1"/>
+                                <label for="config[20:21][13]_opt1">Enable DeriveKey command.</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td colspan="2"></td>
+                            <td data-config-enable="config[20:21][13]=1" colspan="3">DeriveKey command is enabled.</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td data-config-enable="config[20:21][13]=1" class="range-single" colspan="3">12</td>
+                            <td data-config-enable="config[20:21][13]=1">DeriveKeySource</td>
+                            <td data-config-enable="config[20:21][13]=1">
+                                <input type="radio" name="SlotConfig[0].DeriveKeySource" id="config[20:21][12]=0_opt2"/>
+                                <label for="config[20:21][12]=0_opt2">[0] Target/Roll</label><br/>
+                                <input type="radio" name="SlotConfig[0].DeriveKeySource" id="config[20:21][12]=1_opt2"/>
+                                <label for="config[20:21][12]=1_opt2">[1] Parent/Create</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td data-config-enable="config[20:21][13]=1" class="range-single" colspan="3">14</td>
+                            <td data-config-enable="config[20:21][13]=1">DeriveKeyWriteMode</td>
+                            <td data-config-enable="config[20:21][13]=1">
+                                <input type="radio" name="SlotConfig[0].DeriveKeyWriteMode" id="config[20:21][14]=0_opt2"/>
+                                <label for="config[20:21][14]=0_opt2">[0] Never - Writes are never permitted.</label><br/>
+                                <input type="radio" name="SlotConfig[0].DeriveKeyWriteMode" id="config[20:21][14]=1_opt2"/>
+                                <label for="config[20:21][14]=1_opt2">[1] Encrypt - Writes must be encrypted and include a MAC.</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td data-config-enable="config[20:21][13]=1" class="range-single" colspan="3">15</td>
+                            <td data-config-enable="config[20:21][13]=1">DeriveKeyMAC</td>
+                            <td data-config-enable="config[20:21][13]=1">
+                                <input type="checkbox" name="SlotConfig[0].DeriveKeyMAC" id="config[20:21][15]_opt2"/>
+                                <label for="config[20:21][15]_opt2">DeriveKey command requires authorizing MAC.</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td colspan="2"></td>
+                            <td data-config-enable="config[20:21][13]=0" colspan="3">DeriveKey command is disabled.</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td data-config-enable="config[20:21][13]=0" class="range-start">12</td>
+                            <td data-config-enable="config[20:21][13]=0" class="range-sep">-</td>
+                            <td data-config-enable="config[20:21][13]=0" class="range-stop">15</td>
+                            <td data-config-enable="config[20:21][13]=0">NoDeriveWriteMode</td>
+                            <td data-config-enable="config[20:21][13]=0">
+                                <input type="radio" name="SlotConfig[0].NoDeriveWriteMode" id="config[20:21][12:15]=0_opt3" value="always"/>
+                                <label for="config[20:21][12:15]=0_opt3">[0] Always - Clear text writes always permitted.</label><br/>
+                                <input type="radio" name="SlotConfig[0].NoDeriveWriteMode" id="config[20:21][12:15]=1_opt3" value="pubinvalid"/>
+                                <label for="config[20:21][12:15]=1_opt3">[1] PubInvalid - Clear text writes only permitted when public key is invalidated.</label><br/>
+                                <input type="radio" name="SlotConfig[0].NoDeriveWriteMode" id="config[20:21][12:15]=4_opt3" value="encrypt"/>
+                                <label for="config[20:21][12:15]=4_opt3">[4] Encrypt - Writes must be encrypted and include a MAC.</label><br/>
+                                <input type="radio" name="SlotConfig[0].NoDeriveWriteMode" id="config[20:21][12:15]=8_opt3" value="never"/>
+                                <label for="config[20:21][12:15]=8_opt3">[8] Never - Writes are never permitted.</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td colspan="5">Slot is a private key (KeyConfig[0].Private = 1).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">12</td>
+                            <td>DontCare12</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].Unused12" id="config[20:21][12]_opt4"/>
+                                <label for="config[20:21][12]_opt4">Don't care.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">13</td>
+                            <td>GenKey</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].GenKey" id="config[20:21][13]_opt4"/>
+                                <label for="config[20:21][13]_opt4">Enable the GenKey command.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">14</td>
+                            <td>PrivWrite</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].PrivWrite" id="config[20:21][14]_opt4"/>
+                                <label for="config[20:21][14]_opt4">Enable the PrivWrite command.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">15</td>
+                            <td>DontCare15</td>
+                            <td>
+                                <input type="checkbox" name="SlotConfig[0].Unused15" id="config[20:21][15]_opt4"/>
+                                <label for="config[20:21][15]_opt4">Don't care.</label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">52</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">59</td>
+                <td>Counter[0]</td>
+                <td>
+                    <input type="text" name="Counter[0]" id="config[52:59]_data" size="24" />
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="Counter[0]-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="details">
+                        Value: <input type="text" name="Counter[0]_Count" id="Counter[0]_Count" size="8" onkeyup="setCounterFromCount(0, this.value)" onpaste="setCounterFromCount(0, this.value)" oncut="setCounterFromCount(0, this.value)" onBlur="updateCounter(0)" />
+                        Remaining: <input type="text" name="Counter[0]_Remaining" id="Counter[0]_Remaining" size="8" onkeyup="setCounterFromRemaining(0, this.value)" onpaste="setCounterFromRemaining(0, this.value)" oncut="setCounterFromRemaining(0, this.value)" onBlur="updateCounter(0)" />
+                        <br/>
+                        Max Value: 2097151
+                        <div class="messages" id="Counter[0]-messages"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">60</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">67</td>
+                <td>Counter[1]</td>
+                <td>
+                    <input type="text" name="Counter[1]" id="config[60:67]_data" size="24" />
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="Counter[1]-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="details">
+                        Value: <input type="text" name="Counter[1]_Count" id="Counter[1]_Count" size="8" onkeyup="setCounterFromCount(1, this.value)" onpaste="setCounterFromCount(1, this.value)" oncut="setCounterFromCount(1, this.value)" onBlur="updateCounter(1)" />
+                        Remaining: <input type="text" name="Counter[1]_Remaining" id="Counter[1]_Remaining" size="8" onkeyup="setCounterFromRemaining(1, this.value)" onpaste="setCounterFromRemaining(1, this.value)" oncut="setCounterFromRemaining(1, this.value)" onBlur="updateCounter(1)" />
+                        <br/>
+                        Max Value: 2097151
+                        <div class="messages" id="Counter[1]-messages"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">68</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">83</td>
+                <td>LastKeyUse</td>
+                <td>
+                    <input type="text" name="LastKeyUse" id="config[68:83]_data" size="48" />
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="LastKeyUse-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="details">
+                        Slot 15 Key Uses Remaining: <input type="text" name="LastKeyUse_Count" id="LastKeyUse_Count" size="3" onkeyup="setLastKeyUseFromCount(this.value)" onpaste="setLastKeyUseFromCount(this.value)" oncut="setLastKeyUseFromCount(this.value)" onBlur="updateLastKeyUseCount()" />
+                        <div class="messages" id="LastKeyUse-messages"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="config-row update-extra">
+                <td class="range-single" colspan="3">84</td>
+                <td>UserExtra</td>
+                <td>
+                    <input type="text" name="UserExtra" id="config[84]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <textarea id="UserExtra-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="messages" id="UserExtra-messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row update-extra">
+                <td class="range-single" colspan="3">85</td>
+                <td>Selector</td>
+                <td>
+                    <input type="text" name="Selector" id="config[85]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <textarea id="Selector-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="messages" id="Selector-messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row lock">
+                <td class="range-single" colspan="3">86</td>
+                <td>LockValue</td>
+                <td>
+                    <input type="text" name="LockValue" id="config[86]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <br/>
+                    <div class="messages" id="LockValue-messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row lock">
+                <td class="range-single" colspan="3">87</td>
+                <td>LockConfig</td>
+                <td>
+                    <input type="text" name="LockConfig" id="config[87]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <br/>
+                    <div class="messages" id="LockConfig-messages"></div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">88</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">89</td>
+                <td>SlotLocked</td>
+                <td>
+                    <input type="text" name="SlotLocked" id="config[88:89]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="SlotLocked-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <div class="details">
+                        <input type="checkbox" name="SlotLocked[0]" id="config[88:89][0]"/><label for="config[88:89][0]">0</label>
+                        <input type="checkbox" name="SlotLocked[1]" id="config[88:89][1]"/><label for="config[88:89][1]">1</label>
+                        <input type="checkbox" name="SlotLocked[2]" id="config[88:89][2]"/><label for="config[88:89][2]">2</label>
+                        <input type="checkbox" name="SlotLocked[3]" id="config[88:89][3]"/><label for="config[88:89][3]">3</label>
+                        <input type="checkbox" name="SlotLocked[4]" id="config[88:89][4]"/><label for="config[88:89][4]">4</label>
+                        <input type="checkbox" name="SlotLocked[5]" id="config[88:89][5]"/><label for="config[88:89][5]">5</label>
+                        <input type="checkbox" name="SlotLocked[6]" id="config[88:89][6]"/><label for="config[88:89][6]">6</label>
+                        <input type="checkbox" name="SlotLocked[7]" id="config[88:89][7]"/><label for="config[88:89][7]">7</label>
+                        <input type="checkbox" name="SlotLocked[8]" id="config[88:89][8]"/><label for="config[88:89][8]">8</label>
+                        <input type="checkbox" name="SlotLocked[9]" id="config[88:89][9]"/><label for="config[88:89][9]">9</label>
+                        <input type="checkbox" name="SlotLocked[10]" id="config[88:89][10]"/><label for="config[88:89][10]">10</label>
+                        <input type="checkbox" name="SlotLocked[11]" id="config[88:89][11]"/><label for="config[88:89][11]">11</label>
+                        <input type="checkbox" name="SlotLocked[12]" id="config[88:89][12]"/><label for="config[88:89][12]">12</label>
+                        <input type="checkbox" name="SlotLocked[13]" id="config[88:89][13]"/><label for="config[88:89][13]">13</label>
+                        <input type="checkbox" name="SlotLocked[14]" id="config[88:89][14]"/><label for="config[88:89][14]">14</label>
+                        <input type="checkbox" name="SlotLocked[15]" id="config[88:89][15]"/><label for="config[88:89][15]">15</label>
+                        <div id="SlotLocked-messages" class="messages"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">90</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">91</td>
+                <td>RFU</td>
+                <td>
+                    <input type="text" name="RFU" id="config[90:91]_data"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <br/>
+                </td>
+            </tr>
+            <tr class="config-row">
+                <td class="range-start">92</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">95</td>
+                <td>X509format</td>
+                <td>
+                    <input type="text" name="X509format" id="config[92:95]_data"/><b
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <textarea id="X509format-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                </td>
+            </tr>
+            <tr class="config-row" id="KeyConfig[0]">
+                <td class="range-start">96</td>
+                <td class="range-sep">-</td>
+                <td class="range-stop">97</td>
+                <td>KeyConfig[0]</td>
+                <td>
+                    <input type="text" name="KeyConfig[0]" id="config[96:97]_hex"/>
+                    <span class="error-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#error-icon"/></svg>
+                    </span>
+                    <span class="warning-icon">
+                        <svg viewBox="0 0 75 75" width="0.2in" height="0.2in"><use xlink:href="#warning-icon"/></svg>
+                    </span>
+                    <a href="" onclick="toggleDetails(event); return false;" class="detail-toggle">show details</a>
+                    <textarea id="KeyConfig[0]-comments" class="comments" cols="50" rows="1" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"></textarea>
+                    <br/>
+                    
+                    <table class="details">
+                        <tr>
+                            <th colspan="3">Bits</th>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">0</td>
+                            <td>Private</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].Private" id="config[96:97][0]"/>
+                                <label for="config[96:97][0]">Slot contains an ECC private key.</label>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td colspan="5">Slot is not a private key (KeyConfig.Private = 0).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=0">
+                            <td class="range-single" colspan="3">1</td>
+                            <td>PubInfo</td>
+                            <td>
+                                <div>This option only applies if the slot >= 8 and it's marked as an ECC key (KeyType=4)</div>
+                                <input type="radio" name="KeyConfig[0].PubInfo2" id="config[96:97][1]=0_opt1"/>
+                                <label for="config[96:97][1]=0_opt1">The public key in this slot can be used by the Verify command without being validated.</label><br/>
+                                <input type="radio" name="KeyConfig[0].PubInfo2" id="config[96:97][1]=1_opt1"/>
+                                <label for="config[96:97][1]=1_opt1">The public key in this slot can be used by the Verify command only if the public key in the slot has been validated.</label><br/>
+                            </td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td colspan="5">Slot is a private key (KeyConfig.Private = 1).</td>
+                        </tr>
+                        <tr data-config-enable="config[96:97][0]=1">
+                            <td class="range-single" colspan="3">1</td>
+                            <td>PubInfo</td>
+                            <td>
+                                <input type="radio" name="KeyConfig[0].PubInfo1" id="config[96:97][1]=0_opt2"/>
+                                <label for="config[96:97][1]=0_opt2">The public version of this key can never be generated. Use this mode for the highest security.</label><br/>
+                                <input type="radio" name="KeyConfig[0].PubInfo1" id="config[96:97][1]=1_opt2"/>
+                                <label for="config[96:97][1]=1_opt2">The public version of this key can always be generated.</label><br/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">2</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">4</td>
+                            <td>KeyType</td>
+                            <td>
+                                <input type="text" name="KeyConfig[0].KeyType1" id="config[96:97][2:4]_dec"/></br>
+                                <input type="radio" name="KeyConfig[0].KeyType2" id="config[96:97][2:4]=4_opt2"/>
+                                <label for="config[96:97][2:4]=4_opt2">P256 NIST ECC key.</label><br/>
+                                <input type="radio" name="KeyConfig[0].KeyType2" id="config[96:97][2:4]=7_opt2"/>
+                                <label for="config[96:97][2:4]=7_opt2">Not an ECC key.</label><br/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">5</td>
+                            <td>Lockable</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].Lockable" id="config[96:97][5]"/>
+                                <label for="config[96:97][5]">Slot can be individually locked using the Lock command.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">6</td>
+                            <td>ReqRandom</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].ReqRandom" id="config[96:97][6]"/>
+                                <label for="config[96:97][6]">A random nonce is required for GenKey, MAC, HMAC, CheckMac, Verify, DeriveKey, and GenDig.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">7</td>
+                            <td>ReqAuth</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].ReqAuth" id="config[96:97][7]"/>
+                                <label for="config[96:97][7]">An authorization by another key (KeyConfig[0].AuthKey) is required before this key can be used.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">8</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">11</td>
+                            <td>AuthKey</td>
+                            <td>
+                                <input type="text" name="KeyConfig[0].AuthKey" id="config[96:97][8:11]_dec"/>Key that must be used for authorization if ReqAuth is enabled. Must be 0 otherwise.<br/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">12</td>
+                            <td>IntrusionDisable</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].IntrusionDisable" id="config[96:97][12]"/>
+                                <label for="config[96:97][12]">Disable key if IntrusionLatch is 0.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-single" colspan="3">13</td>
+                            <td>RFU</td>
+                            <td>
+                                <input type="checkbox" name="KeyConfig[0].RFU" id="config[96:97][13]"/>
+                                <label for="config[96:97][13]">Must be 0.</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="range-start">14</td>
+                            <td class="range-sep">-</td>
+                            <td class="range-stop">15</td>
+                            <td>X509id</td>
+                            <td>
+                                <input type="text" name="KeyConfig[0].X509id" id="config[96:97][14:15]_dec"/>The index into the X509format array within the Configuration zone (addresses 92-95) which corresponds to this slot. Must be 0 if slot is not a public key.<br/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-header-rotated">
+            <thead>
+                <tr>
+                    <th class="rotate"><div><span>Slot</span></div></th>
+                    <th class="rotate"><div><span>Description</span></div></th>
+                    <th class="rotate"><div><span>Type</span></div></th>
+                    <th class="rotate"><div><span>Lockable</span></div></th>
+                    <th class="rotate"><div><span>ReqRandom</span></div></th>
+                    <th class="rotate"><div><span>ReqAuth</span></div></th>
+                    <th class="rotate"><div><span>AuthKey</span></div></th>
+                    <th class="rotate"><div><span>IntrusionDisable</span></div></th>
+                    <th class="rotate"><div><span>NoMac</span></div></th>
+                    <th class="rotate"><div><span>LimitedUsed</span></div></th>
+                    <!-- ECC Private Key -->
+                    <th class="rotate"><div><span>GenPubKey</span></div></th>
+                    <th class="rotate"><div><span>ExternalSigs</span></div></th>
+                    <th class="rotate"><div><span>InternalSigs</span></div></th>
+                    <th class="rotate"><div><span>ECDH</span></div></th>
+                    <th class="rotate"><div><span>WriteMasterSecret</span></div></th>
+                    <th class="rotate"><div><span>GenKey</span></div></th>
+                    <th class="rotate"><div><span>PrivWrite</span></div></th>
+                    <!-- ECC Public Key -->
+                    <th class="rotate"><div><span>ReqValidate</span></div></th>
+                    <th class="rotate"><div><span>X509id</span></div></th>
+                    <!-- Data / ECC Public Key -->
+                    <th class="rotate"><div><span>ReadMode</span></div></th>
+                    <th class="rotate"><div><span>ReadKey</span></div></th>
+                    <th class="rotate"><div><span>WriteMode</span></div></th>
+                    <th class="rotate"><div><span>WriteKey</span></div></th>
+                    <th class="rotate"><div><span>DeriveKey</span></div></th>
+                    <th class="rotate"><div><span>DeriveKeyParent</span></div></th>
+                    <th class="rotate"><div><span>DeriveKeyMAC</span></div></th>
+                    <th class="rotate"><div><span>SlotConfig</span></div></th>
+                    <th class="rotate"><div><span>KeyConfig</span></div></th>
+                </tr>
+                <!--
+                <tr>
+                    <th colspan="9"></th>
+                    <th colspan="7">Private Key</th>
+                    <th colspan="2">Public Key</th>
+                    <th colspan="7">Data / Public Key</th>
+                </tr>
+                -->
+            </thead>
+            <tbody>
+                <tr id="SlotEditor[0]">
+                    <td>0</td>
+                    <td>
+                        <input type="text" id="SlotConfig[0]-comments" size="30" onkeyup="setComment(this)" onpaste="setComment(this)" oncut="setComment(this)"/>
+                    </td>
+                    <td>
+                        <select name="SlotType[0]" id="SlotType[0]" onchange="onSlotTypeChange(this)">
+                            <option value="ecc-private-key">ECC Private Key</option>
+                            <option value="ecc-public-key">ECC Public Key</option>
+                            <option value="data">Data</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="KeyConfig[0].Lockable" id="config[96:97][5]_opt2"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="KeyConfig[0].ReqRandom" id="config[96:97][6]_opt2"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="KeyConfig[0].ReqAuth" id="config[96:97][7]_opt2"/>
+                    </td>
+                    <td>
+                        <input type="text" name="KeyConfig[0].AuthKey" id="config[96:97][8:11]_dec_opt2" size="2"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="KeyConfig[0].IntrusionDisable" id="config[96:97][12]_opt2"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="SlotConfig[0].NoMac" id="config[20:21][4]_opt2"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="SlotConfig[0].LimitedUse" id="config[20:21][5]_opt2"/>
+                    </td>
+                    
+                    <!-- ECC Private Key -->
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="KeyConfig[0].PubInfo" id="config[96:97][1]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].ExternalSigs" id="config[20:21][0]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].InternalSigs" id="config[20:21][1]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].ECDH" id="config[20:21][2]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].WriteMasterSecret" id="config[20:21][3]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].GenKey" id="config[20:21][13]_opt5"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=1">
+                        <input type="checkbox" name="SlotConfig[0].PrivWrite" id="config[20:21][14]_opt5"/>
+                    </td>
+                    
+                    <!-- ECC Public Key -->
+                    <td data-config-enable="config[96:97][0]=0">
+                        <input type="checkbox" name="KeyConfig[0].PubInfo" id="config[96:97][1]_opt4"/>
+                    </td>
+                    <td>
+                        <input type="text" name="KeyConfig[0].X509id" id="config[96:97][14:15]_dec_opt2" size="1"/>
+                    </td>
+                    
+                    <!-- Data / ECC Public Key -->
+                    <td data-config-enable="config[96:97][0]=0">
+                        <select name="ReadMode[0]" id="ReadMode[0]" onchange="onReadModeChange(this)">
+                            <option value="Clear">Clear</option>
+                            <option value="Never">Never</option>
+                            <option value="Encrypted">Encrypted</option>
+                            <option value="Invalid">INVALID</option>
+                        </select>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=0">
+                        <input type="text" name="SlotConfig[0].ReadKey" id="config[20:21][0:3]_dec_opt3" size="2"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=0">
+                        <select name="WriteMode[0]" id ="WriteMode[0]" onchange="onWriteModeChange(this)">
+                            <option value="Always">Always</option>
+                            <option value="PubInvalid">PubInvalid</option>
+                            <option value="Never">Never</option>
+                            <option value="Encrypted">Encrypt</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="SlotConfig[0].WriteKey" id="config[20:21][8:11]_dec_opt2" size="2"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=0">
+                        <input type="checkbox" name="SlotConfig[0].DeriveKey" id="config[20:21][13]_opt3"/>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=0">
+                        <span data-config-enable="config[20:21][13]=1">
+                        <input type="checkbox" name="SlotConfig[0].DeriveKeySource" id="config[20:21][12]_opt3"/>
+                        </span>
+                    </td>
+                    <td data-config-enable="config[96:97][0]=0">
+                        <span data-config-enable="config[20:21][13]=1">
+                        <input type="checkbox" name="SlotConfig[0].DeriveKeyMAC" id="config[20:21][15]_opt3"/>
+                        </span>
+                    </td>
+                    <td>
+                        <input type="text" name="SlotConfig[0]" id="config[20:21]_hex_se" size="6"/>
+                    </td>
+                    <td>
+                        <input type="text" name="KeyConfig[0]" id="config[96:97]_hex_se" size="6"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="26" style="text-align:right;">
+                        Config Value Format:
+                    </td>
+                    <td colspan="2" style="text-align:left;">
+                        <input type="radio" name="SlotEditorConfigFormat" id="SlotEditorConfigFormat=value" value="hex" onchange="onSlotEditorConfigFormatChange(this)" checked="checked"/>
+                        <label for="SlotEditorConfigFormat=value">Value (BE)</label>
+                        <br/>
+                        <input type="radio" name="SlotEditorConfigFormat" id="SlotEditorConfigFormat=data" value="data" onchange="onSlotEditorConfigFormatChange(this)"/>
+                        <label for="SlotEditorConfigFormat=data">Data (LE)</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        <br/>
+        <div>
+            <div>
+                <span>Import/Export Format:</span>
+                <input type="radio" name="import-export-format" id="import-export-format=ACES XML" value="ACES XML" checked="checked" onclick="syncExport()"/>
+                <label for="import-export-format=ACES XML">ACES XML</label>
+                <input type="radio" name="import-export-format" id="import-export-format=Pers XML" value="Pers XML" onclick="syncExport()"/>
+                <label for="import-export-format=Pers XML">Personalization XML</label>
+                <input type="radio" name="import-export-format" id="import-export-format=HEX" value="HEX" onclick="syncExport()"/>
+                <label for="import-export-format=HEX">HEX</label>
+                <input type="radio" name="import-export-format" id="import-export-format=C HEX" value="C HEX" onclick="syncExport()"/>
+                <label for="import-export-format=C HEX">C HEX</label>
+            </div>
+            <textarea id="config-import-export" cols="100" rows="60" onkeyup="importExportOnChange(event);" onpaste="importExportOnChange(event);" oncut="importExportOnChange(event);"></textarea>
+        </div>
+        <div style="border-top: solid 1px #000000; text-align: right;">
+            ATMEL CONFIDENTIAL - For release only under non-disclosure agreement
+        </div>
+    </body>
+    
+    <script type="text/javascript">
+    //<![CDATA[
+    
+        // attach the .equals method to Array's prototype to call it on any array
+        Array.prototype.equals = function (array) {
+            // if the other array is a falsy value, return
+            if (!array)
+                return false;
+
+            // compare lengths - can save a lot of time 
+            if (this.length != array.length)
+                return false;
+
+            for (var i = 0, l=this.length; i < l; i++) {
+                // Check if we have nested arrays
+                if (this[i] instanceof Array && array[i] instanceof Array) {
+                    // recurse into the nested arrays
+                    if (!this[i].equals(array[i]))
+                        return false;       
+                }           
+                else if (this[i] != array[i]) { 
+                    // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                    return false;   
+                }           
+            }       
+            return true;
+        }
+    
+        var DEF_CONFIG_ECC508A_UDFN_I2C = [
+            0x01, 0x23, 0x12, 0x24, 0x00, 0x00, 0x50, 0x00,  0xD8, 0x2C, 0xA5, 0x71, 0xEE, 0xC0, 0x69, 0x00,
+            0xC0, 0x00, 0x55, 0x00, 0x83, 0x20, 0x87, 0x20,  0x8F, 0x20, 0xC4, 0x8F, 0x8F, 0x8F, 0x8F, 0x8F,
+            0x9F, 0x8F, 0xAF, 0x8F, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xAF, 0x8F, 0xFF, 0xFF, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+            0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x55, 0x55,  0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x33, 0x00, 0x33, 0x00, 0x33, 0x00, 0x1C, 0x00,  0x1C, 0x00, 0x1C, 0x00, 0x1C, 0x00, 0x1C, 0x00,
+            0x3C, 0x00, 0x3C, 0x00, 0x3C, 0x00, 0x3C, 0x00,  0x3C, 0x00, 0x3C, 0x00, 0x3C, 0x00, 0x1C, 0x00];
+        
+        var g_config_data = new Array(128);
+        
+        function ConfigItem(name, byte_offset, byte_count, bit_offset, bit_count)
+        {
+            this.name = name;
+            this.byte_offset = byte_offset;
+            this.byte_count  = byte_count;
+            this.bit_offset  = bit_offset == undefined ? 0 : bit_offset;
+            this.bit_count   = bit_count == undefined ? byte_count*8 : bit_count;
+        }
+        
+        var ECC508A_SN03       = new ConfigItem("SN03",         0, 4);
+        var ECC508A_REVNUM     = new ConfigItem("RevNum",       4, 4);
+        var ECC508A_SN48       = new ConfigItem("SN48",         8, 5);
+        var ECC508A_RESERVED13 = new ConfigItem("Reserved13",  13, 1);
+        var ECC508A_I2CENABLE  = new ConfigItem("I2C_Enable",  14, 1);
+        var ECC508A_I2CENABLE_MODE     = new ConfigItem("I2C_Enable.Mode",     14, 1, 0, 1);
+        var ECC508A_I2CENABLE_RESERVED = new ConfigItem("I2C_Enable.Reserved", 14, 1, 1, 7);
+        var ECC508A_RESERVED15 = new ConfigItem("Reserved15",  15, 1);
+        var ECC508A_I2CADDRESS = new ConfigItem("I2C_Address", 16, 1);
+        var ECC508A_I2CADDRESS_GPIOMODE      = new ConfigItem("I2C_Address.GPIOMode",      16, 1, 0, 2);
+        var ECC508A_I2CADDRESS_GPIODEFSTATE  = new ConfigItem("I2C_Address.GPIODefState",  16, 1, 2, 1);
+        var ECC508A_I2CADDRESS_GPIOAUTHMODE  = new ConfigItem("I2C_Address.GPIOAuthMode",  16, 1, 3, 1);
+        var ECC508A_I2CADDRESS_GPIOSIGNALKEY = new ConfigItem("I2C_Address.GPIOSignalKey", 16, 1, 4, 4);
+        var ECC508A_I2CADDRESS_ADDRESS       = new ConfigItem("I2C_Address.Address",       16, 1, 0, 8);
+        var ECC508A_RESERVED17 = new ConfigItem("Reserved17",  17, 1);
+        var ECC508A_OTPMODE    = new ConfigItem("OTPmode",     18, 1);
+        var ECC508A_CHIPMODE   = new ConfigItem("ChipMode",    19, 1);
+        var ECC508A_CHIPMODE_SELECTORMODE     = new ConfigItem("ChipMode.SelectorMode",     19, 1, 0, 1);
+        var ECC508A_CHIPMODE_TTLENABLE        = new ConfigItem("ChipMode.TTLenable",        19, 1, 1, 1);
+        var ECC508A_CHIPMODE_WATCHDOGDURATION = new ConfigItem("ChipMode.WatchdogDuration", 19, 1, 2, 1);
+        var ECC508A_CHIPMODE_RESERVED         = new ConfigItem("ChipMode.Reserved",         19, 1, 3, 5);
+        var ECC508A_SLOTCONFIG = new Array();
+        for (var slot = 0; slot < 16; slot++)
+        {
+            var items = new Object();
+            items.FULL = new ConfigItem("SlotConfig[" + slot + "]", 20 + slot*2, 2);
+            items.READKEY            = new ConfigItem("SlotConfig[" + slot + "].ReadKey",            20 + slot*2, 2, 0,  4);
+            items.EXTERNALSIGS       = new ConfigItem("SlotConfig[" + slot + "].ExternalSigs",       20 + slot*2, 2, 0,  1);
+            items.INTERNALSIGS       = new ConfigItem("SlotConfig[" + slot + "].InternalSigs",       20 + slot*2, 2, 1,  1);
+            items.ECDH               = new ConfigItem("SlotConfig[" + slot + "].ECDH",               20 + slot*2, 2, 2,  1);
+            items.WRITEMASTERSEC     = new ConfigItem("SlotConfig[" + slot + "].WriteMasterSecret",  20 + slot*2, 2, 3,  1);
+            items.NOMAC              = new ConfigItem("SlotConfig[" + slot + "].NoMac",              20 + slot*2, 2, 4,  1);
+            items.LIMITEDUSE         = new ConfigItem("SlotConfig[" + slot + "].LimitedUse",         20 + slot*2, 2, 5,  1);
+            items.READMODE           = new ConfigItem("SlotConfig[" + slot + "].ReadMode",           20 + slot*2, 2, 6,  2);
+            items.ENCRYPTEDREAD      = new ConfigItem("SlotConfig[" + slot + "].EncryptedRead",      20 + slot*2, 2, 6,  1);
+            items.ISSECRET           = new ConfigItem("SlotConfig[" + slot + "].IsSecret",           20 + slot*2, 2, 7,  1);
+            items.WRITEKEY           = new ConfigItem("SlotConfig[" + slot + "].WriteKey",           20 + slot*2, 2, 8,  4);
+            items.WRITECONFIG        = new ConfigItem("SlotConfig[" + slot + "].WriteConfig",        20 + slot*2, 2, 12, 4);
+            // Write config flags, some overlap
+            items.NODERIVEWRITEMODE  = new ConfigItem("SlotConfig[" + slot + "].NoDeriveWriteMode",  20 + slot*2, 2, 12, 4);
+            items.DERIVEKEY          = new ConfigItem("SlotConfig[" + slot + "].DeriveKey",          20 + slot*2, 2, 13, 1);
+            items.DERIVEKEYSOURCE    = new ConfigItem("SlotConfig[" + slot + "].DeriveKeySource",    20 + slot*2, 2, 12, 1);
+            items.DERIVEKEYWRITEMODE = new ConfigItem("SlotConfig[" + slot + "].DeriveKeyWriteMode", 20 + slot*2, 2, 14, 1);
+            items.DERIVEKEYMAC       = new ConfigItem("SlotConfig[" + slot + "].DeriveKeyMAC",       20 + slot*2, 2, 15, 1);
+            items.GENKEY             = new ConfigItem("SlotConfig[" + slot + "].GenKey",             20 + slot*2, 2, 13, 1);
+            items.PRIVWRITE          = new ConfigItem("SlotConfig[" + slot + "].PrivWrite",          20 + slot*2, 2, 14, 1);
+            
+            ECC508A_SLOTCONFIG.push(items);
+        }
+        var ECC508A_COUNTER = new Array();
+        ECC508A_COUNTER[0]     = new ConfigItem("Counter[0]", 52, 8);
+        ECC508A_COUNTER[1]     = new ConfigItem("Counter[1]", 60, 8);
+        var ECC508A_LASTKEYUSE = new ConfigItem("LastKeyUse", 68, 16);
+        var ECC508A_USEREXTRA  = new ConfigItem("UserExtra",  84, 1);
+        var ECC508A_SELECTOR   = new ConfigItem("Selector",   85, 1);
+        var ECC508A_LOCKVALUE  = new ConfigItem("LockValue",  86, 1);
+        var ECC508A_LOCKCONFIG = new ConfigItem("LockConfig", 87, 1);
+        var ECC508A_SLOTLOCKED = new ConfigItem("SlotLocked", 88, 2);
+        var ECC508A_RFU        = new ConfigItem("RFU",        90, 2);
+        var ECC508A_X509FORMAT = new ConfigItem("X509format", 92, 4);
+        var ECC508A_KEYCONFIG = new Array();
+        for (var slot = 0; slot < 16; slot++)
+        {
+            var items = new Object();
+            items.FULL             = new ConfigItem("KeyConfig[" + slot + "]",                   96 + slot*2, 2);
+            items.PRIVATE          = new ConfigItem("KeyConfig[" + slot + "].Private",           96 + slot*2, 2, 0,  1);
+            items.PUBINFO          = new ConfigItem("KeyConfig[" + slot + "].PubInfo",           96 + slot*2, 2, 1,  1);
+            items.KEYTYPE          = new ConfigItem("KeyConfig[" + slot + "].KeyType",           96 + slot*2, 2, 2,  3);
+            items.LOCKABLE         = new ConfigItem("KeyConfig[" + slot + "].Lockable",          96 + slot*2, 2, 5,  1);
+            items.REQRANDOM        = new ConfigItem("KeyConfig[" + slot + "].ReqRandom",         96 + slot*2, 2, 6,  1);
+            items.REQAUTH          = new ConfigItem("KeyConfig[" + slot + "].ReqAuth",           96 + slot*2, 2, 7,  1);
+            items.AUTHKEY          = new ConfigItem("KeyConfig[" + slot + "].AuthKey",           96 + slot*2, 2, 8,  4);
+            items.INTRUSIONDISABLE = new ConfigItem("KeyConfig[" + slot + "].IntrusionDisable",  96 + slot*2, 2, 12, 1);
+            items.RFU              = new ConfigItem("KeyConfig[" + slot + "].RFU",               96 + slot*2, 2, 13, 1);
+            items.X509ID           = new ConfigItem("KeyConfig[" + slot + "].X509id",            96 + slot*2, 2, 14, 2);
+            
+            ECC508A_KEYCONFIG.push(items);
+        }
+        
+        var g_comments = new Object();
+        
+        function initConfigurator()
+        {
+            replicateSlotConfig();
+            replicateKeyConfig();
+            replicateSlotEditor();
+            
+            setConfig(DEF_CONFIG_ECC508A_UDFN_I2C);
+            
+            // Add event handlers to the input fields
+            var input_elements = document.getElementsByTagName("input");
+            for (var i = 0; i < input_elements.length; i++)
+            {
+                var params = parseConfigID(input_elements[i].id);
+                if (!params)
+                    continue;
+                
+                if (input_elements[i].type == "text")
+                {
+                    input_elements[i].onkeyup = configInputTextChange;
+                    input_elements[i].oncut   = configInputTextChange;
+                    input_elements[i].onpaste = configInputTextChange;
+                    input_elements[i].onblur  = configInputOnBlur;
+                }
+                else if (input_elements[i].type == "checkbox")
+                {
+                    input_elements[i].onclick = configInputCheckboxChange;
+                }
+                else if (input_elements[i].type == "radio")
+                {
+                    input_elements[i].onclick = configInputRadioChange;
+                }
+            }
+        }
+        
+        function updateName(element, prefix, offset)
+        {
+            if (!element.children)
+                return;
+            for (var i = 0; i < element.children.length; i++)
+            {
+                var results = RegExp('^' + prefix + '\\[([0-9]+)\\]').exec(element.children[i].id);
+                if (results)
+                    element.children[i].id = element.children[i].id.replace(results[0], prefix + "[" + (Number(results[1])+offset) + "]");
+                if (element.children[i].tagName == "INPUT" || element.children[i].tagName == "SELECT")
+                {
+                    var results = RegExp('^' + prefix + '\\[([0-9]+)\\]').exec(element.children[i].name);
+                    if (results)
+                        element.children[i].name = element.children[i].name.replace(results[0], prefix + "[" + (Number(results[1])+offset) + "]");
+                }
+                updateName(element.children[i], prefix, offset);
+            }
+        }
+        
+        function updateConfigRefs(element, offset)
+        {
+            if (!element.children)
+                return;
+            for (var i = 0; i < element.children.length; i++)
+            {
+                for (var j = 0; j < element.children[i].attributes.length; j++)
+                {
+                    var results = /^config\[([0-9]+)(?:\:([0-9]+))?\](.*)/.exec(element.children[i].attributes[j].value);
+                    if (results)
+                    {
+                        if (typeof results[2] == "undefined")
+                            element.children[i].attributes[j].value = "config[" + (Number(results[1]) + offset) + "]" + results[3];
+                        else
+                            element.children[i].attributes[j].value = "config[" + (Number(results[1]) + offset) + ":" + (Number(results[2]) + offset) + "]" + results[3];
+                    }
+                }
+                updateConfigRefs(element.children[i], offset);
+            }
+        }
+        
+        function replicateSlotConfig()
+        {
+            var last_slot_elem = document.getElementById("SlotConfig[0]");
+            
+            for (var i = 1; i < 16; i++)
+            {
+                var next_slot_elem = last_slot_elem.cloneNode(true);
+                
+                next_slot_elem.id = "SlotConfig[" + i + "]";
+                
+                next_slot_elem.children[0].innerHTML = 20 + i*2;
+                next_slot_elem.children[2].innerHTML = 21 + i*2;
+                next_slot_elem.children[3].innerHTML = "SlotConfig[" + i + "]";
+                
+                updateName(next_slot_elem, "SlotConfig", 1);
+                updateConfigRefs(next_slot_elem, 2);
+                
+                last_slot_elem.parentNode.insertBefore(next_slot_elem, last_slot_elem.nextSibling);
+                last_slot_elem = next_slot_elem;
+            }
+        }
+        
+        function replicateKeyConfig()
+        {
+            var last_slot_elem = document.getElementById("KeyConfig[0]");
+            
+            for (var i = 1; i < 16; i++)
+            {
+                var next_slot_elem = last_slot_elem.cloneNode(true);
+                
+                next_slot_elem.id = "KeyConfig[" + i + "]";
+                
+                next_slot_elem.children[0].innerHTML = 96 + i*2;
+                next_slot_elem.children[2].innerHTML = 97 + i*2;
+                next_slot_elem.children[3].innerHTML = "KeyConfig[" + i + "]";
+                
+                updateName(next_slot_elem, "KeyConfig", 1);
+                updateConfigRefs(next_slot_elem, 2);
+                
+                last_slot_elem.parentNode.insertBefore(next_slot_elem, last_slot_elem.nextSibling);
+                last_slot_elem = next_slot_elem;
+            }
+        }
+        
+        function replicateSlotEditor()
+        {
+            var last_slot_elem = document.getElementById("SlotEditor[0]");
+            
+            for (var i = 1; i < 16; i++)
+            {
+                var next_slot_elem = last_slot_elem.cloneNode(true);
+                
+                next_slot_elem.id = "SlotEditor[" + i + "]";
+                
+                next_slot_elem.children[0].innerHTML = i;
+                
+                updateName(next_slot_elem, "KeyConfig", 1);
+                updateName(next_slot_elem, "SlotConfig", 1);
+                updateName(next_slot_elem, "SlotType", 1);
+                updateName(next_slot_elem, "ReadMode", 1);
+                updateName(next_slot_elem, "WriteMode", 1);
+                updateConfigRefs(next_slot_elem, 2);
+                
+                last_slot_elem.parentNode.insertBefore(next_slot_elem, last_slot_elem.nextSibling);
+                last_slot_elem = next_slot_elem;
+            }
+        }
+        
+        function setConfig(new_config)
+        {
+            g_config_data = new_config.slice();
+            syncConfigToDisplay(0, g_config_data.length, null);
+        }
+        
+        function parseConfigID(id)
+        {
+            var config_params = new Object();
+            
+            // Parse the config array byte range
+            var config_results = /^config\[([0-9]+)(?:\:([0-9]+))?\](.*)/.exec(id);
+            if (!config_results)
+                return null;
+            
+            config_params.id          = id;
+            config_params.byte_offset = Number(config_results[1]);
+            config_params.byte_count  = typeof config_results[2] == "undefined" ? 1 : config_results[2] - config_params.byte_offset + 1;
+            var remainder = config_results[3];
+            
+            // Parse the bit range within the byte range
+            config_params.bit_offset = 0;
+            config_params.bit_count  = 8*config_params.byte_count;
+            var bit_results = /\[([0-9]+)(?:\:([0-9]+))?\](.*)/.exec(remainder);
+            if (bit_results)
+            {
+                config_params.bit_offset = Number(bit_results[1]);
+                config_params.bit_count  = typeof bit_results[2] == "undefined" ? 1 : bit_results[2] - config_params.bit_offset + 1;
+                remainder = bit_results[3];
+            }
+            
+            // Convert the byte/bit range to a value
+            var config_item = new ConfigItem("", config_params.byte_offset, config_params.byte_count, config_params.bit_offset, config_params.bit_count);
+            config_params.value = getConfigValue(config_item, g_config_data);
+            
+            var radio_results = /=([0-9]+)/.exec(remainder);
+            if (radio_results)
+                config_params.radio_value = Number(radio_results[1]);
+            else
+                config_params.radio_value = null;
+                
+            var text_results = /_(bin|hex|dec|data)/.exec(remainder);
+            if (text_results)
+                config_params.text_format = text_results[1];
+            else
+                config_params.text_format = null;
+                
+            return config_params;
+        }
+        
+        function getConfigValue(config_item, data)
+        {
+            if (config_item.byte_count > 2)
+                return null;
+            
+            // Convert raw bytes to multi-byte value assuming LSB ordering
+            var value = 0;
+            for (var j = 0; j < config_item.byte_count; j++)
+                value |= data[config_item.byte_offset+j] << (j*8);
+            
+            var bit_mask = 0;
+            for (var j = 0; j < config_item.bit_count; j++)
+                bit_mask |= (1<<j);
+            value = value >>> config_item.bit_offset;
+            value = value & bit_mask;
+            
+            return value;
+        }
+        
+        function encodeLastKeyUse(count)
+        {
+            if (count < 0)
+                count = 0;
+            if (count > ECC508A_LASTKEYUSE.bit_count)
+                count = ECC508A_LASTKEYUSE.bit_count;
+            
+            var data = new Array();
+            for (var byte_idx = ECC508A_LASTKEYUSE.byte_count-1; byte_idx >= 0 ; byte_idx--)
+            {
+                var cur_byte = 0x00;
+                for (var bit_idx = 0; bit_idx < 8; bit_idx++)
+                    cur_byte |= (count-- > 0 ? 1 : 0) << bit_idx;
+                data[byte_idx] = cur_byte;
+            }
+            
+            return data;
+        }
+        
+        function decodeLastKeyUse(count_enc)
+        {
+            var count = 0;
+            
+            for (var byte_idx = 0; byte_idx < count_enc.length; byte_idx++)
+            {
+                for (var bit_idx = 7; bit_idx >= 0; bit_idx--)
+                {
+                    if ((count_enc[byte_idx] & (1 << bit_idx)) > 0)
+                        count++;
+                    else if (count > 0)
+                        return count;
+                }
+            }
+            
+            return count;
+        }
+        
+        function setLastKeyUseFromCount(count)
+        {
+            var data = encodeLastKeyUse(count);
+            setConfigData(ECC508A_LASTKEYUSE, data, null);
+        }
+        
+        function updateLastKeyUseCount()
+        {
+            var count_enc = g_config_data.slice(ECC508A_LASTKEYUSE.byte_offset, ECC508A_LASTKEYUSE.byte_offset + ECC508A_LASTKEYUSE.byte_count);
+            var count     = decodeLastKeyUse(count_enc);
+            document.getElementById("LastKeyUse_Count").value = count;
+        }
+        
+        function encodeCounter(count_num)
+        {
+            if (count_num < 0)
+                count_num = 0;
+            else if (count_num > 2097151)
+                count_num = 2097151;
+            
+            var lin_a = 0xFFFF >> (count_num % 32);
+            var lin_b = 0xFFFF >> ((count_num >= 16) ? (count_num - 16) % 32 : 0);
+            var bin_a = Math.floor(count_num / 32);
+            var bin_b = (count_num >= 16) ? Math.floor((count_num - 16) / 32) : 0;
+            
+            var data = new Array();
+            var idx = 0;
+            data[idx++] = lin_a >> 8;
+            data[idx++] = lin_a & 0xFF;
+            data[idx++] = lin_b >> 8;
+            data[idx++] = lin_b & 0xFF;
+            data[idx++] = bin_a >> 8;
+            data[idx++] = bin_a & 0xFF;
+            data[idx++] = bin_b >> 8;
+            data[idx++] = bin_b & 0xFF;
+            
+            return data;
+        }
+        
+        function decodeCounter(count_enc)
+        {
+            var offset = 0;
+            if (count_enc[0] == 0 && count_enc[1] == 0)
+                offset = 2;
+
+            var lin = (count_enc[0 + offset] << 8) | count_enc[1 + offset];
+            var bin = (count_enc[4 + offset] << 8) | count_enc[5 + offset];
+
+            var lin_num = 0;
+            for (lin_num = 0; lin_num < 16; lin_num++)
+                if ((lin & (1 << (15 - lin_num))) != 0)
+                    break;
+
+            return bin * 32 + lin_num + offset * 8;
+        }
+        
+        function setCounterFromCount(counter_id, count_num)
+        {
+            var data = encodeCounter(count_num);
+            setConfigData(ECC508A_COUNTER[counter_id], data, null);
+        }
+        
+        function setCounterFromRemaining(counter_id, remaining)
+        {
+            var data = encodeCounter(2097151 - remaining);
+            setConfigData(ECC508A_COUNTER[counter_id], data, null);
+        }
+        
+        function updateCounter(counter_id)
+        {
+            var count_enc = g_config_data.slice(ECC508A_COUNTER[counter_id].byte_offset, ECC508A_COUNTER[counter_id].byte_offset + ECC508A_COUNTER[counter_id].byte_count);
+            var count_num = decodeCounter(count_enc);
+            document.getElementById("Counter[" + counter_id + "]_Count").value = count_num;
+            document.getElementById("Counter[" + counter_id + "]_Remaining").value = 2097151 - count_num;
+        }
+        
+        function syncConfigToDisplay(update_byte_offset, update_byte_count, focused_element)
+        {
+            var input_elements = document.getElementsByTagName("input");
+            for (var i = 0; i < input_elements.length; i++)
+            {
+                if (focused_element === input_elements[i])
+                    continue;
+                
+                var config_params = parseConfigID(input_elements[i].id);
+                if (!config_params)
+                    continue;
+                
+                // TODO: Restrict updates to only elements that are affected by update_byte_offset and update_byte_count
+                if (input_elements[i].type == "text")
+                {
+                    if (!config_params.text_format)
+                    {
+                        input_elements[i].disabled = true;
+                        continue;
+                    }
+                    
+                    if (config_params.text_format == "dec")
+                    {
+                        if (config_params.value == null)
+                        {
+                            input_elements[i].disabled = true;
+                            continue;
+                        }
+                        input_elements[i].value = config_params.value;
+                    }
+                    else if (config_params.text_format == "hex")
+                    {
+                        if (config_params.value == null)
+                        {
+                            input_elements[i].disabled = true;
+                            continue;
+                        }
+                        var hex_str = config_params.value.toString(16).toUpperCase();
+                        while (hex_str.length < Math.ceil(config_params.bit_count/4))
+                            hex_str = "0" + hex_str;
+                        input_elements[i].value = "0x" + hex_str;
+                    }
+                    else if (config_params.text_format == "bin")
+                    {
+                        if (config_params.value == null)
+                        {
+                            input_elements[i].disabled = true;
+                            continue;
+                        }
+                        input_elements[i].value = "0b" + formatBinary(config_params.value, config_params.bit_count);
+                    }
+                    else if (config_params.text_format == "data")
+                    {
+                        if (config_params.bit_offset != 0 || config_params.bit_count != config_params.byte_count*8)
+                        {
+                            input_elements[i].disabled = true;
+                            continue;
+                        }
+                        input_elements[i].value = formatHexBytes(g_config_data, config_params.byte_offset, config_params.byte_count);
+                    }
+                    else
+                    {
+                        input_elements[i].disabled = true;
+                        continue;
+                    }
+                }
+                else if (input_elements[i].type == "radio")
+                {
+                    if (config_params.radio_value == null)
+                    {
+                        input_elements[i].disabled = true;
+                        continue;
+                    }
+                    input_elements[i].checked = (config_params.value == config_params.radio_value);
+                }
+                else if (input_elements[i].type == "checkbox")
+                {
+                    if (config_params.bit_count != 1)
+                    {
+                        input_elements[i].disabled = true;
+                        continue;
+                    }
+                    input_elements[i].checked = (config_params.value != 0);
+                }
+                else
+                {
+                    input_elements[i].disabled = true;
+                    continue;
+                }
+                input_elements[i].is_parsed_ok = true;
+            }
+            
+            updateLastKeyUseCount();
+            updateCounter(0);
+            updateCounter(1);
+            syncConfigDisabledSections(document.body.children);
+            syncComments(focused_element);
+            syncConfigMessages();
+            syncSlotEditor();
+            syncExport();
+        }
+        
+        function syncConfigDisabledSections(html_elements)
+        {
+            if (html_elements.length <= 0)
+                return;
+            
+            for (var i = 0; i < html_elements.length; i++)
+            {
+                if (html_elements[i].hasAttribute("data-config-enable"))
+                {
+                    var params = parseConfigID(html_elements[i].getAttribute("data-config-enable"));
+                    if (!params)
+                    {
+                        console.log("data-config-enable=" + html_elements[i].getAttribute("data-config-enable") + " - Unable to parse input id");
+                        continue;
+                    }
+                    
+                    if (params.value == null || params.radio_value == null)
+                    {
+                        console.log("data-config-enable=" + params.id + " - Unable to parse values");
+                        continue;
+                    }
+                    
+                    var is_disabled = (params.value != params.radio_value);
+                    if (is_disabled)
+                        html_elements[i].className += " config-disabled";
+                    else
+                        html_elements[i].className = html_elements[i].className.replace(/\s+config-disabled/g, " ");
+                    
+                    if (html_elements[i].name == "input" || html_elements[i].name == "select")
+                        html_elements[i].disabled = is_disabled;
+                    var input_elements = html_elements[i].getElementsByTagName("input");
+                    for (var j = 0; j < input_elements.length; j++)
+                        input_elements[j].disabled = is_disabled;
+                    var select_elements = html_elements[i].getElementsByTagName("select");
+                    for (var j = 0; j < select_elements.length; j++)
+                        select_elements[j].disabled = is_disabled;
+                        
+                    if (!is_disabled && html_elements[i].children)
+                        syncConfigDisabledSections(html_elements[i].children);
+                }
+                else if (html_elements[i].children)
+                {
+                    syncConfigDisabledSections(html_elements[i].children);
+                }
+            }
+        }
+        
+        function syncComments(focused_element)
+        {
+            var elements = document.getElementsByTagName("textarea");
+            for (var i = 0; i < elements.length; i++)
+            {
+                if (elements[i] === focused_element)
+                    continue;
+                
+                var matches = /^(.+)-comments/.exec(elements[i].id);
+                if (!matches)
+                    continue;
+                
+                if (g_comments[matches[1]] !== undefined)
+                    elements[i].value = g_comments[matches[1]];
+            }
+            
+            var elements = document.getElementsByTagName("input");
+            for (var i = 0; i < elements.length; i++)
+            {
+                if (elements[i] === focused_element)
+                    continue;
+                
+                var matches = /^(.+)-comments/.exec(elements[i].id);
+                if (!matches)
+                    continue;
+                
+                if (g_comments[matches[1]] !== undefined)
+                    elements[i].value = g_comments[matches[1]];
+            }
+        }
+        
+        function createMessageNode(ref_node, msg_str)
+        {
+            var msg_node = ref_node.cloneNode(true);
+            msg_node.id = "";
+            msg_node.getElementsByClassName("msg-text")[0].appendChild(document.createTextNode(msg_str));
+            
+            return msg_node;
+        }
+        
+        function showIcon(msg_node, type, is_shown)
+        {
+            while (msg_node && msg_node.className.search("config-row") == -1)
+                msg_node = msg_node.parentNode;
+            if (!msg_node)
+                return;
+            var icons = msg_node.getElementsByClassName(type+"-icon");
+            for (var i = 0; i < icons.length; i++)
+                icons[i].style.visibility = is_shown ? "visible" : "hidden";
+        }
+        
+        function syncConfigMessages()
+        {
+            var note_template    = document.getElementById("note-msg-template");
+            var warning_template = document.getElementById("warning-msg-template");
+            var error_template   = document.getElementById("error-msg-template");
+            
+            // Clear all messages
+            var msg_nodes = document.getElementsByClassName("messages");
+            for (var i = 0; i < msg_nodes.length; i++)
+                while (msg_nodes[i].firstChild)
+                    msg_nodes[i].removeChild(msg_nodes[i].firstChild);
+            var error_icons = document.getElementsByClassName("error-icon");
+            for (var i = 0; i < error_icons.length; i++)
+                error_icons[i].style.visibility = "hidden";
+            var warning_icons = document.getElementsByClassName("warning-icon");
+            for (var i = 0; i < warning_icons.length; i++)
+                warning_icons[i].style.visibility = "hidden";
+            
+            // Generate messages for the current config
+            var messages = generateMessagesECC508A(g_config_data);
+            
+            for (var i = 0; i < messages.length; i++)
+            {
+                var element = document.getElementById(messages[i].config_name + "-messages");
+                if (!element)
+                {
+                    console.log("Can't save errors to " + messages[i].config_name + "-messages");
+                    continue;
+                }
+                
+                // Add messages
+                for (var j = 0; j < messages[i].errors.length; j++)
+                    element.appendChild(createMessageNode(error_template, messages[i].errors[j]));
+                showIcon(element, "error", messages[i].errors.length > 0);
+                for (var j = 0; j < messages[i].warnings.length; j++)
+                    element.appendChild(createMessageNode(warning_template, messages[i].warnings[j]));
+                showIcon(element, "warning", messages[i].warnings.length > 0);
+                for (var j = 0; j < messages[i].notes.length; j++)
+                    element.appendChild(createMessageNode(note_template, messages[i].notes[j]));
+            }
+        }
+        
+        function addMsgNote(messages, config_item, msg)
+        {
+            var item_messages = findConfigItemMessages(messages, config_item.name);
+            item_messages.notes.push(msg);
+        }
+                
+        function addMsgWarning(messages, config_item, msg)
+        {
+            var item_messages = findConfigItemMessages(messages, config_item.name);
+            item_messages.warnings.push(msg);
+        }
+        
+        function addMsgError(messages, config_item, msg)
+        {
+            var item_messages = findConfigItemMessages(messages, config_item.name);
+            item_messages.errors.push(msg);
+        }
+        
+        function findConfigItemMessages(messages, config_name)
+        {
+            var item_messages = null;
+            for (var i = 0; i < messages.length; i++)
+            {
+                if (messages[i].config_name == config_name)
+                {
+                    item_messages = messages[i];
+                    break;
+                }
+            }
+            if (item_messages == null)
+            {
+                messages.push({config_name:config_name, warnings:[], errors:[], notes:[]});
+                item_messages = messages[messages.length-1];
+            }
+            
+            return item_messages;
+        }
+        
+        function syncSlotEditor()
+        {
+            for (var slot = 0; slot < 16; slot++)
+            {
+                setSlotType(slot);
+                setSlotReadMode(slot);
+                setSlotWriteMode(slot);
+            }
+        }
+        
+        function setSlotType(slot)
+        {
+            var elem = document.getElementById("SlotType[" + slot + "]");
+            if (getConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, g_config_data) == 1)
+                elem.value = "ecc-private-key";
+            else if (getConfigValue(ECC508A_KEYCONFIG[slot].KEYTYPE, g_config_data) == 4)
+                elem.value = "ecc-public-key";
+            else
+                elem.value = "data";
+        }
+        
+        function onSlotTypeChange(elem)
+        {
+            var results = /^[a-zA-Z]+\[([0-9]+)\]/.exec(elem.id);
+            if (!results)
+                return;
+            var slot = results[1];
+            
+            if (elem.value == "ecc-private-key")
+            {
+                setConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, 1, elem);
+                setConfigValue(ECC508A_KEYCONFIG[slot].KEYTYPE, 4, elem);
+                setConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, 2, elem);
+            }
+            else if (elem.value == "ecc-public-key")
+            {
+                setConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, 0, elem);
+                setConfigValue(ECC508A_KEYCONFIG[slot].KEYTYPE, 4, elem);
+            }
+            else
+            {
+                setConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, 0, elem);
+                setConfigValue(ECC508A_KEYCONFIG[slot].KEYTYPE, 7, elem);
+            }
+        }
+        
+        function setSlotReadMode(slot)
+        {
+            var elem = document.getElementById("ReadMode[" + slot + "]");
+            if (getConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, g_config_data) == 0)
+            {
+                var read_mode = getConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, g_config_data);
+                switch (read_mode)
+                {
+                case 0: elem.value = "Clear"; break;
+                case 1: elem.value = "Invalid"; break;
+                case 2: elem.value = "Never"; break;
+                case 3: elem.value = "Encrypted"; break;
+                }
+            }
+            else
+            {
+                elem.value = "Never";
+            }
+        }
+        
+        function onReadModeChange(elem)
+        {
+            var results = /^[a-zA-Z]+\[([0-9]+)\]/.exec(elem.id);
+            if (!results)
+                return;
+            var slot = results[1];
+            
+            if (elem.value == "Clear")
+                setConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, 0, elem);
+            else if (elem.value == "Invalid")
+                setConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, 1, elem);
+            else if (elem.value == "Never")
+                setConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, 2, elem);
+            else if (elem.value == "Encrypted")
+                setConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, 3, elem);
+        }
+        
+        function createOption(value, text)
+        {
+            var option = document.createElement("option");
+            option.value = value;
+            option.text  = text;
+            return option;
+        }
+        
+        function setSlotWriteMode(slot)
+        {
+            var elem = document.getElementById("WriteMode[" + slot + "]");
+            if (getConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, g_config_data) == 0)
+            {
+                // Remove all the options
+                while (elem.options.length)
+                    elem.options.remove(0);
+                
+                if (getConfigValue(ECC508A_SLOTCONFIG[slot].DERIVEKEY, g_config_data) == 0)
+                {
+                    elem.options.add(createOption("Always", "Always"));
+                    elem.options.add(createOption("PubInvalid", "PubInvalid"));
+                    elem.options.add(createOption("Never", "Never"));
+                    elem.options.add(createOption("Encrypted", "Encrypt"));
+                    var write_mode = getConfigValue(ECC508A_SLOTCONFIG[slot].NODERIVEWRITEMODE, g_config_data);
+                    var temp = (write_mode & 0x04);
+                    if (write_mode == 0)
+                        elem.value = "Always";
+                    else if (write_mode == 1)
+                        elem.value = "PubInvalid";
+                    else if ((write_mode & 0x04) != 0)
+                        elem.value = "Encrypted";
+                    else
+                        elem.value = "Never";
+                }
+                else
+                {
+                    elem.options.add(createOption("Never", "Never"));
+                    elem.options.add(createOption("Encrypted", "Encrypt"));
+                    if (getConfigValue(ECC508A_SLOTCONFIG[slot].DERIVEKEYWRITEMODE, g_config_data) == 1)
+                        elem.value = "Encrypted";
+                    else
+                        elem.value = "Never";
+                }
+            }
+            else
+            {
+                if (getConfigValue(ECC508A_SLOTCONFIG[slot].PRIVWRITE, g_config_data) == 0)
+                    elem.value = "Never";
+                else
+                    elem.value = "Encrypted";
+            }
+        }
+        
+        function onWriteModeChange(elem)
+        {
+            var results = /^[a-zA-Z]+\[([0-9]+)\]/.exec(elem.id);
+            if (!results)
+                return;
+            var slot = results[1];
+            
+            if (getConfigValue(ECC508A_SLOTCONFIG[slot].DERIVEKEY, g_config_data) == 0)
+            {
+                if (elem.value == "Always")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].NODERIVEWRITEMODE, 0, elem);
+                else if (elem.value == "PubInvalid")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].NODERIVEWRITEMODE, 1, elem);
+                else if (elem.value == "Never")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].NODERIVEWRITEMODE, 8, elem);
+                else //if (elem.value == "Encrypted")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].NODERIVEWRITEMODE, 4, elem);
+            }
+            else
+            {
+                if (elem.value == "Never")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].DERIVEKEYWRITEMODE, 0, elem);
+                else //if (elem.value == "Encrypted")
+                    setConfigValue(ECC508A_SLOTCONFIG[slot].DERIVEKEYWRITEMODE, 1, elem);
+            }
+        }
+        
+        function setSlotEditorConfigFormat(elements, format)
+        {
+            for (var i = 0; i < elements.length; i++)
+            {
+                var results = /^(config\[[0-9]+:[0-9]+\]_)([a-z]+)(_se.*)$/.exec(elements[i].id);
+                if (results)
+                    elements[i].id = results[1] + format + results[3];
+            }
+        }
+        
+        function onSlotEditorConfigFormatChange(elem)
+        {
+            for (var slot=0; slot<16; slot++)
+            {
+                setSlotEditorConfigFormat(document.getElementsByName("SlotConfig[" + slot + "]"), elem.value);
+                setSlotEditorConfigFormat(document.getElementsByName("KeyConfig[" + slot + "]"), elem.value);
+            }
+            syncConfigToDisplay(0, g_config_data.length, null);
+        }
+        
+        function hexByte(value)
+        {
+            return ("0"+(Number(value).toString(16))).slice(-2).toUpperCase();
+        }
+        
+        function formatHexBytes(data, offset, count)
+        {
+            var hex_str = "";
+            for (var i = offset; i < data.length && i < offset+count; i++)
+            {
+                if (i > offset)
+                    hex_str += " ";
+                hex_str += hexByte(data[i]);
+            }
+            
+            return hex_str;
+        }
+        
+        function formatBinary(value, width)
+        {
+            var bin_str = Number(value).toString(2);
+            while (bin_str.length < width)
+                bin_str = "0" + bin_str;
+            
+            return bin_str;
+        }
+        
+        function parseHexData(str)
+        {
+            if (/[^\s0-9A-Fa-f]+/g.test(str))
+                return null; // Non-hex characters in element.
+            
+            var hex_str = "";
+            var hex_regex = /[0-9a-fA-F]+/g;
+            var results = null;
+            while (results = hex_regex.exec(str))
+            {
+                if (results[0].length % 2 == 0)
+                    hex_str += results[0];
+                else
+                    hex_str += "0" + results[0]; // Pad single nibbles
+            }
+            
+            var data = Array();
+            for (var i = 0; i < hex_str.length/2; i++)
+                data[i] = parseInt(hex_str.substr(i*2, 2), 16);
+            
+            return data;
+        }
+        
+        function configInputTextChange(event)
+        {
+            var config_params = parseConfigID(event.target.id);
+            if (!config_params)
+            {
+                console.log("id=" + event.target.id + " - Unable to parse input id");
+                return;
+            }
+            
+            if (config_params.text_format == "data")
+            {
+                event.target.is_parsed_ok = false;
+                
+                var data = parseHexData(event.target.value);
+                if (data)
+                {
+                    while (data.length < config_params.byte_count)
+                        data.push(0);
+                    event.target.is_parsed_ok = true;
+                    setConfigData(config_params, data, event.target);
+                }
+            }
+            else if (config_params.text_format == "hex")
+            {
+                event.target.is_parsed_ok = false;
+                
+                var results = /^\s*(?:0x)?([0-9a-fA-F]+)\s*$/.exec(event.target.value);
+                if (!results)
+                {
+                    console.log("id=" + event.target.id + " - Non-hex characters in the field.");
+                    return;
+                }
+                
+                var new_value = parseInt(results[1], 16);
+                if (new_value > ((1 << config_params.bit_count) - 1))
+                {
+                    console.log("id=" + event.target.id + " - Value is too large.");
+                    return;
+                }
+                
+                event.target.is_parsed_ok = true;
+                
+                setConfigValue(config_params, new_value, event.target);
+            }
+            else if (config_params.text_format == "bin")
+            {
+                event.target.is_parsed_ok = false;
+                
+                var results = /^\s*(?:0b)?([01]+)\s*$/.exec(event.target.value);
+                if (!results)
+                {
+                    console.log("id=" + event.target.id + " - Non-hex characters in the field.");
+                    return;
+                }
+                
+                var new_value = parseInt(results[1], 2);
+                if (new_value > ((1 << config_params.bit_count) - 1))
+                {
+                    console.log("id=" + event.target.id + " - Value is too large.");
+                    return;
+                }
+                
+                event.target.is_parsed_ok = true;
+                
+                setConfigValue(config_params, new_value, event.target);
+            }
+            else if (config_params.text_format == "dec")
+            {
+                event.target.is_parsed_ok = false;
+                
+                var results = /^\s*([0-9]+)\s*$/.exec(event.target.value);
+                if (!results)
+                {
+                    console.log("id=" + event.target.id + " - Non-number characters in the field.");
+                    return;
+                }
+                
+                var new_value = parseInt(results[1]);
+                if (new_value > ((1 << config_params.bit_count) - 1))
+                {
+                    console.log("id=" + event.target.id + " - Value is too large.");
+                    return;
+                }
+                
+                event.target.is_parsed_ok = true;
+                
+                setConfigValue(config_params, new_value, event.target);
+            }
+        }
+        
+        function setConfigData(config_params, data, focused_element)
+        {
+            for (var i = 0; i < config_params.byte_count; i++)
+                g_config_data[config_params.byte_offset + i] = data[i];
+            
+            syncConfigToDisplay(config_params.byte_offset, config_params.byte_count, focused_element);
+        }
+        
+        function setConfigValue(config_params, value, focused_element)
+        {
+            var bit_mask = 0;
+            for (var i = config_params.bit_offset; i < config_params.bit_offset + config_params.bit_count; i++)
+                bit_mask |= (1 << i);
+            
+            var shifted_value = (value << config_params.bit_offset) & bit_mask;
+            
+            bit_mask = ~bit_mask;
+            var data = g_config_data.slice(config_params.byte_offset, config_params.byte_offset + config_params.byte_count);
+            for (var i = 0; i < data.length; i++)
+            {
+                var cur_byte = shifted_value >>> i*8;
+                var cur_mask = bit_mask >>> i*8;
+                
+                data[i] = (data[i] & cur_mask) | cur_byte;
+            }
+            
+            setConfigData(config_params, data, focused_element);
+        }
+        
+        function addConfigElement(doc, name, data, byte_start, byte_stop, comment, parent, indent)
+        {
+            if (indent === undefined || indent === null)
+                indent = "  ";
+                
+            if (parent === undefined || parent === null)
+                parent = doc.documentElement;
+            
+            if (comment !== undefined && comment !== null && comment.trim() != "")
+            {
+                parent.appendChild(doc.createTextNode("\n" + indent));
+                var formatted_comment = comment.trim();
+                if (formatted_comment.match(/\n/) !== null)
+                    formatted_comment = "\n  " + indent + formatted_comment.replace(/\n/gm, "\n  " + indent) + "\n" + indent;
+                else
+                    formatted_comment = " " + formatted_comment + " ";
+                parent.appendChild(doc.createComment(formatted_comment));
+                parent.appendChild(doc.createTextNode("\n"));
+            }
+            
+            var element = doc.createElement(name);
+            element.appendChild(doc.createTextNode(formatHexBytes(data, byte_start, byte_stop - byte_start)));
+            parent.appendChild(doc.createTextNode(indent));
+            parent.appendChild(element);
+            parent.appendChild(doc.createTextNode("\n"));
+            
+            return element;
+        }
+        
+        function formatConfigData(data, format)
+        {
+            var config_str = "";
+            
+            if (format == "ACES XML")
+            {
+                var config_doc = document.implementation.createDocument(null, 'ConfigZone', null);
+                config_doc.documentElement.appendChild(config_doc.createTextNode("\n"));
+                
+                var index = 0;
+                addConfigElement(config_doc, "Sn0to1", data, index, index+=2);
+                addConfigElement(config_doc, "Sn2to3", data, index, index+=2);
+                addConfigElement(config_doc, "RevNum", data, index, index+=4);
+                addConfigElement(config_doc, "Sn4to7", data, index, index+=4);
+                addConfigElement(config_doc, "Sn8", data, index, index+=1);
+                addConfigElement(config_doc, "Reserved13", data, index, index+=1, g_comments[ECC508A_RESERVED13.name]);
+                addConfigElement(config_doc, "I2C_Enable", data, index, index+=1, g_comments[ECC508A_I2CENABLE.name]);
+                addConfigElement(config_doc, "Reserved15", data, index, index+=1, g_comments[ECC508A_RESERVED15.name]);
+                addConfigElement(config_doc, "I2C_Address", data, index, index+=1, g_comments[ECC508A_I2CADDRESS.name]);
+                addConfigElement(config_doc, "Reserved", data, index, index+=1, g_comments[ECC508A_RESERVED17.name]);
+                addConfigElement(config_doc, "OTPmode", data, index, index+=1, g_comments[ECC508A_OTPMODE.name]);
+                addConfigElement(config_doc, "ChipMode", data, index, index+=1, g_comments[ECC508A_CHIPMODE.name]);
+                for (var i = 0; i < 16; i++)
+                    addConfigElement(config_doc, "SlotConfig" + hexByte(i), data, index, index+=2, g_comments[ECC508A_SLOTCONFIG[i].FULL.name]);
+                addConfigElement(config_doc, "Counter0", data, index, index+=8, g_comments[ECC508A_COUNTER[0].name]);
+                addConfigElement(config_doc, "Counter1", data, index, index+=8, g_comments[ECC508A_COUNTER[1].name]);
+                addConfigElement(config_doc, "LastKeyUse", data, index, index+=16, g_comments[ECC508A_LASTKEYUSE.name]);
+                addConfigElement(config_doc, "UserExtra", data, index, index+=1, g_comments[ECC508A_USEREXTRA.name]);
+                addConfigElement(config_doc, "Selector", data, index, index+=1, g_comments[ECC508A_SELECTOR.name]);
+                addConfigElement(config_doc, "LockValue", data, index, index+=1, g_comments[ECC508A_LOCKVALUE.name]);
+                addConfigElement(config_doc, "LockConfig", data, index, index+=1, g_comments[ECC508A_LOCKCONFIG.name]);
+                addConfigElement(config_doc, "SlotLocked", data, index, index+=2, g_comments[ECC508A_SLOTLOCKED.name]);
+                addConfigElement(config_doc, "Rfu90", data, index, index+=2, g_comments[ECC508A_RFU.name]);
+                addConfigElement(config_doc, "X509Format", data, index, index+=1, g_comments[ECC508A_X509FORMAT.name]);
+                addConfigElement(config_doc, "X509Format", data, index, index+=1);
+                addConfigElement(config_doc, "X509Format", data, index, index+=1);
+                addConfigElement(config_doc, "X509Format", data, index, index+=1);
+                for (var i = 0; i < 16; i++)
+                    addConfigElement(config_doc, "KeyConfig" + hexByte(i), data, index, index+=2, g_comments[ECC508A_KEYCONFIG[i].FULL.name]);
+                
+                var serializer = new XMLSerializer();
+                config_str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + serializer.serializeToString(config_doc);
+            }
+            else if (format == "Pers XML")
+            {
+                var config_doc = document.implementation.createDocument(null, 'ConfigurationZone', null);
+                config_doc.documentElement.appendChild(config_doc.createTextNode("\n"));
+                
+                var element;
+                addConfigElement(config_doc, "SN01", data, 0, 2);
+                addConfigElement(config_doc, "SN8", data, 12, 13);
+                addConfigElement(config_doc, "I2CEnable", data, 14, 15, g_comments[ECC508A_I2CENABLE.name]);
+                addConfigElement(config_doc, "I2CAddress", data, 16, 17, g_comments[ECC508A_I2CADDRESS.name]);
+                element = addConfigElement(config_doc, "Reserved", data, 17, 18, g_comments[ECC508A_RESERVED17.name]);
+                element.setAttribute("Address", 17);
+                element.setAttribute("Size", 1);
+                addConfigElement(config_doc, "OTPMode", data, 18, 19, g_comments[ECC508A_OTPMODE.name]);
+                addConfigElement(config_doc, "ChipMode", data, 19, 20, g_comments[ECC508A_CHIPMODE.name]);
+                
+                var slot_configs_elem = config_doc.createElement("SlotConfigurations");
+                slot_configs_elem.setAttribute("Size", 16);
+                slot_configs_elem.appendChild(config_doc.createTextNode("\n"));
+                for (var slot = 0; slot < 16; slot++)
+                {
+                    element = addConfigElement(
+                        config_doc,
+                        "SlotConfiguration",
+                        data,
+                        20 + slot*2,
+                        22 + slot*2,
+                        g_comments[ECC508A_SLOTCONFIG[slot].FULL.name],
+                        slot_configs_elem,
+                        "    ");
+                    element.setAttribute("Index", Number(slot).toString(16).toUpperCase());
+                }
+                slot_configs_elem.appendChild(config_doc.createTextNode("  "));
+                config_doc.documentElement.appendChild(config_doc.createTextNode("  "));
+                config_doc.documentElement.appendChild(slot_configs_elem);
+                config_doc.documentElement.appendChild(config_doc.createTextNode("\n"));
+                
+                element = addConfigElement(config_doc, "Counter0", data, 52, 60, g_comments[ECC508A_COUNTER[0].name]);
+                element.setAttribute("Size", 8);
+                element = addConfigElement(config_doc, "Counter1", data, 60, 68, g_comments[ECC508A_COUNTER[1].name]);
+                element.setAttribute("Size", 8);
+                element = addConfigElement(config_doc, "LastKeyUse", data, 68, 84, g_comments[ECC508A_LASTKEYUSE.name]);
+                element.setAttribute("Size", 16);
+                addConfigElement(config_doc, "UserExtra", data, 84, 85, g_comments[ECC508A_USEREXTRA.name]);
+                addConfigElement(config_doc, "Selector", data, 85, 86, g_comments[ECC508A_SELECTOR.name]);
+                addConfigElement(config_doc, "SlotLocked", data, 88, 90, g_comments[ECC508A_SLOTLOCKED.name]);
+                element = addConfigElement(config_doc, "Reserved", data, 90, 92, g_comments[ECC508A_RFU.name]);
+                element.setAttribute("Address", 90);
+                element.setAttribute("Size", 2);
+                addConfigElement(config_doc, "X509format", data, 92, 96, g_comments[ECC508A_X509FORMAT.name]);
+                
+                var key_configs_elem = config_doc.createElement("KeyConfigurations");
+                key_configs_elem.setAttribute("Size", 16);
+                key_configs_elem.appendChild(config_doc.createTextNode("\n"));
+                for (var slot = 0; slot < 16; slot++)
+                {
+                    element = addConfigElement(
+                        config_doc,
+                        "KeyConfiguration",
+                        data,
+                        96 + slot*2,
+                        98 + slot*2,
+                        g_comments[ECC508A_KEYCONFIG[slot].FULL.name],
+                        key_configs_elem,
+                        "    ");
+                    element.setAttribute("Index", Number(slot).toString(16).toUpperCase());
+                }
+                key_configs_elem.appendChild(config_doc.createTextNode("  "));
+                config_doc.documentElement.appendChild(config_doc.createTextNode("  "));
+                config_doc.documentElement.appendChild(key_configs_elem);
+                config_doc.documentElement.appendChild(config_doc.createTextNode("\n"));
+                
+                var serializer = new XMLSerializer();
+                config_str = serializer.serializeToString(config_doc);
+            }
+            else if (format == "HEX")
+            {
+                for (var i = 0; i < data.length; i++)
+                {
+                    if (i > 0)
+                    {
+                        if (i%16 == 0)
+                            config_str += "\n";
+                        else if (i%8 == 0)
+                            config_str += "  ";
+                        else
+                            config_str += " ";
+                    }
+                    config_str += hexByte(data[i]);
+                }
+            }
+            else if (format == "C HEX")
+            {
+                for (var i = 0; i < data.length; i++)
+                {
+                    if (i > 0)
+                    {
+                        if (i%16 == 0)
+                            config_str += ",\n";
+                        else if (i%8 == 0)
+                            config_str += ",  ";
+                        else
+                            config_str += ", ";
+                    }
+                    config_str += "0x" + hexByte(data[i]);
+                }
+            }
+            
+            return config_str;
+        }
+        
+        function escapeRegExp(str) {
+            return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+        }
+        
+        function parseXMLConfigComment(doc, element)
+        {
+            // Comment matching regex matches must exclude --> from the inside of the comment, otherwise it gets greedy
+            // See http://stackoverflow.com/questions/11869793/regular-expressions-find-string-without-substring
+            // Regex string broken up as it can mess with syntax highlighting
+            var comment_regex = new RegExp("<" + "!--((?:(?!--" + ">)[\\s\\S])*?)--" + ">\\s*" + escapeRegExp(element.outerHTML));
+            var matches = comment_regex.exec(element.parentElement.outerHTML);
+            if (!matches)
+                return "";
+            var comment = matches[1];
+            
+            // Break comment text up into lines
+            var lines = comment.split("\n");
+            if (lines <= 1)
+                return comment.trim(); // Comment is only a single line
+            
+            // Find the indent for the comment
+            var min_indent = 99999;
+            for (var i = 0; i < lines.length; i++)
+            {
+                var line = lines[i].replace("\t", "  "); // Assume 2 spaces per tab
+                if (line.trim().length == 0)
+                    continue; // Empty line, don't check for indent
+                var matches = /^( +)/.exec(line);
+                if (matches && matches[1].length < min_indent)
+                    min_indent = matches[1].length;
+            }
+            
+            // Remove the comment indent
+            comment = "";
+            for (var i = 0; i < lines.length; i++)
+            {
+                if (comment.length > 0)
+                    comment += "\n";
+                if (lines[i].length > min_indent)
+                    comment += lines[i].trimRight().substr(min_indent);
+            }
+            
+            return comment;
+        }
+        
+        function parseACESXMLConfigElement(doc, name, name_idx, config, byte_start, byte_stop)
+        {
+            var elem = doc.getElementsByTagName(name)[name_idx];
+            if (!elem || !elem.firstChild)
+                return false;
+            
+            var data = parseHexData(elem.firstChild.nodeValue);
+            if (!data)
+                return false;
+            
+            while (data.length != byte_stop - byte_start)
+                return false;
+            
+            for (var i = 0; i < data.length; i++)
+                config[byte_start + i] = data[i];
+            
+            return parseXMLConfigComment(doc, elem);
+        }
+        
+        function parsePersXMLConfigElement(doc, name, attr_name, attr_value, config, byte_start, byte_stop)
+        {
+            var elems = doc.getElementsByTagName(name);
+            var elem = null;
+            if (attr_name)
+            {
+                for (var i = 0; i < elems.length; i++)
+                {
+                    if (elems[i].getAttribute(attr_name) == attr_value)
+                    {
+                        elem = elems[i];
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                elem = elems[0];
+            }
+            if (!elem || !elem.firstChild)
+                return false;
+            
+            var data = parseHexData(elem.firstChild.nodeValue);
+            if (!data)
+                return false;
+            
+            while (data.length != byte_stop - byte_start)
+                return false;
+            
+            for (var i = 0; i < data.length; i++)
+                config[byte_start + i] = data[i];
+            
+            return parseXMLConfigComment(doc, elem);
+        }
+        
+        function parseConfigData(config_str, format)
+        {
+            var config = new Array();
+            for (var i = 0; i < 128; i++)
+              config[i] = 0;
+            
+            if (format == "ACES XML")
+            {
+                var parser = new DOMParser();
+                var config_doc = parser.parseFromString(config_str, "text/xml");
+               
+                if (config_doc.documentElement.tagName != "ConfigZone")
+                    return config;
+                
+                var index = 0;
+                parseACESXMLConfigElement(config_doc, "Sn0to1", 0, config, index, index+=2);
+                parseACESXMLConfigElement(config_doc, "Sn2to3", 0, config, index, index+=2);
+                parseACESXMLConfigElement(config_doc, "RevNum", 0, config, index, index+=4);
+                parseACESXMLConfigElement(config_doc, "Sn4to7", 0, config, index, index+=4);
+                parseACESXMLConfigElement(config_doc, "Sn8", 0, config, index, index+=1);
+                g_comments[ECC508A_RESERVED13.name] = parseACESXMLConfigElement(config_doc, "Reserved13", 0, config, index, index+=1);
+                g_comments[ECC508A_I2CENABLE.name] = parseACESXMLConfigElement(config_doc, "I2C_Enable", 0, config, index, index+=1);
+                g_comments[ECC508A_RESERVED15.name] = parseACESXMLConfigElement(config_doc, "Reserved15", 0, config, index, index+=1);
+                g_comments[ECC508A_I2CADDRESS.name] = parseACESXMLConfigElement(config_doc, "I2C_Address", 0, config, index, index+=1);
+                g_comments[ECC508A_RESERVED17.name] = parseACESXMLConfigElement(config_doc, "Reserved", 0, config, index, index+=1);
+                g_comments[ECC508A_OTPMODE.name] = parseACESXMLConfigElement(config_doc, "OTPmode", 0, config, index, index+=1);
+                g_comments[ECC508A_CHIPMODE.name] = parseACESXMLConfigElement(config_doc, "ChipMode", 0, config, index, index+=1);
+                for (var i = 0; i < 16; i++)
+                    g_comments[ECC508A_SLOTCONFIG[i].FULL.name] = parseACESXMLConfigElement(config_doc, "SlotConfig" + hexByte(i), 0, config, index, index+=2);
+                g_comments[ECC508A_COUNTER[0].name] = parseACESXMLConfigElement(config_doc, "Counter0", 0, config, index, index+=8);
+                g_comments[ECC508A_COUNTER[1].name] = parseACESXMLConfigElement(config_doc, "Counter1", 0, config, index, index+=8);
+                g_comments[ECC508A_LASTKEYUSE.name] = parseACESXMLConfigElement(config_doc, "LastKeyUse", 0, config, index, index+=16);
+                g_comments[ECC508A_USEREXTRA.name] = parseACESXMLConfigElement(config_doc, "UserExtra", 0, config, index, index+=1);
+                g_comments[ECC508A_SELECTOR.name] = parseACESXMLConfigElement(config_doc, "Selector", 0, config, index, index+=1);
+                g_comments[ECC508A_LOCKVALUE.name] = parseACESXMLConfigElement(config_doc, "LockValue", 0, config, index, index+=1);
+                g_comments[ECC508A_LOCKCONFIG.name] = parseACESXMLConfigElement(config_doc, "LockConfig", 0, config, index, index+=1);
+                g_comments[ECC508A_SLOTLOCKED.name] = parseACESXMLConfigElement(config_doc, "SlotLocked", 0, config, index, index+=2);
+                g_comments[ECC508A_RFU.name] = parseACESXMLConfigElement(config_doc, "Rfu90", 0, config, index, index+=2);
+                g_comments[ECC508A_X509FORMAT.name] = parseACESXMLConfigElement(config_doc, "X509Format", 0, config, index, index+=1);
+                parseACESXMLConfigElement(config_doc, "X509Format", 1, config, index, index+=1);
+                parseACESXMLConfigElement(config_doc, "X509Format", 2, config, index, index+=1);
+                parseACESXMLConfigElement(config_doc, "X509Format", 3, config, index, index+=1);
+                for (var i = 0; i < 16; i++)
+                    g_comments[ECC508A_KEYCONFIG[i].FULL.name] = parseACESXMLConfigElement(config_doc, "KeyConfig" + hexByte(i), 0, config, index, index+=2);
+            }
+            else if (format == "Pers XML")
+            {
+                var parser = new DOMParser();
+                var config_doc = parser.parseFromString(config_str, "text/xml");
+               
+                if (config_doc.documentElement.tagName != "ConfigurationZone")
+                    return config;
+                
+                var index = 0;
+                parsePersXMLConfigElement(config_doc, "SN01", null, null, config, index, index+=2);
+                index = 12;
+                parsePersXMLConfigElement(config_doc, "SN8", null, null, config, index, index+=1);
+                index = 14;
+                g_comments[ECC508A_I2CENABLE.name] = parsePersXMLConfigElement(config_doc, "I2CEnable", null, null, config, index, index+=1);
+                index = 16;
+                g_comments[ECC508A_I2CADDRESS.name] = parsePersXMLConfigElement(config_doc, "I2CAddress", null, null, config, index, index+=1);
+                g_comments[ECC508A_RESERVED17.name] = parsePersXMLConfigElement(config_doc, "Reserved", "Address", "17", config, index, index+=1);
+                g_comments[ECC508A_OTPMODE.name] = parsePersXMLConfigElement(config_doc, "OTPMode", null, null, config, index, index+=1);
+                g_comments[ECC508A_CHIPMODE.name] = parsePersXMLConfigElement(config_doc, "ChipMode", null, null, config, index, index+=1);
+                for (var i = 0; i < 16; i++)
+                    g_comments[ECC508A_SLOTCONFIG[i].FULL.name] = parsePersXMLConfigElement(config_doc, "SlotConfiguration", "Index", hexByte(i).substring(1,2), config, index, index+=2);
+                g_comments[ECC508A_COUNTER[0].name] = parsePersXMLConfigElement(config_doc, "Counter0", null, null, config, index, index+=8);
+                g_comments[ECC508A_COUNTER[1].name] = parsePersXMLConfigElement(config_doc, "Counter1", null, null, config, index, index+=8);
+                g_comments[ECC508A_LASTKEYUSE.name] = parsePersXMLConfigElement(config_doc, "LastKeyUse", null, null, config, index, index+=16);
+                g_comments[ECC508A_USEREXTRA.name] = parsePersXMLConfigElement(config_doc, "UserExtra", null, null, config, index, index+=1);
+                g_comments[ECC508A_SELECTOR.name] = parsePersXMLConfigElement(config_doc, "Selector", null, null, config, index, index+=1);
+                index = 88;
+                g_comments[ECC508A_SLOTLOCKED.name] = parsePersXMLConfigElement(config_doc, "SlotLocked", null, null, config, index, index+=2);
+                g_comments[ECC508A_RFU.name] = parsePersXMLConfigElement(config_doc, "Reserved", "Address", "90", config, index, index+=2);
+                g_comments[ECC508A_X509FORMAT.name] = parsePersXMLConfigElement(config_doc, "X509format", null, null, config, index, index+=4);
+                for (var i = 0; i < 16; i++)
+                    g_comments[ECC508A_KEYCONFIG[i].FULL.name] = parsePersXMLConfigElement(config_doc, "KeyConfiguration", "Index", hexByte(i).substring(1,2), config, index, index+=2);
+            }
+            else if (format == "HEX")
+            {
+                var data = parseHexData(config_str);
+                if (data && data.length == 128)
+                    config = data;
+            }
+            else if (format == "C HEX")
+            {
+                var data = parseHexData(config_str.replace(/(0x|,)/g, ' '));
+                if (data && data.length == 128)
+                    config = data;
+            }
+            
+            return config;
+        }
+        
+        function syncExport()
+        {
+            var opt_aces_xml = document.getElementById("import-export-format=ACES XML");
+            var opt_pers_xml = document.getElementById("import-export-format=Pers XML");
+            var opt_hex      = document.getElementById("import-export-format=HEX");
+            var opt_c_hex    = document.getElementById("import-export-format=C HEX");
+            
+            var config_str = "Unknown format";
+            if (opt_aces_xml.checked)
+                config_str = formatConfigData(g_config_data, "ACES XML");
+            else if (opt_pers_xml.checked)
+                config_str = formatConfigData(g_config_data, "Pers XML");
+            else if (opt_hex.checked)
+                config_str = formatConfigData(g_config_data, "HEX");
+            else if (opt_c_hex.checked)
+                config_str = formatConfigData(g_config_data, "C HEX");
+            
+            document.getElementById("config-import-export").value = config_str;
+        }
+        
+        function importExportOnChange(event)
+        {
+            var opt_aces_xml = document.getElementById("import-export-format=ACES XML");
+            var opt_pers_xml = document.getElementById("import-export-format=Pers XML");
+            var opt_hex      = document.getElementById("import-export-format=HEX");
+            var opt_c_hex    = document.getElementById("import-export-format=C HEX");
+            
+            var config_str = document.getElementById("config-import-export").value;
+            var config = new Array();
+            if (opt_aces_xml.checked)
+                config = parseConfigData(config_str, "ACES XML");
+            else if (opt_pers_xml.checked)
+                config = parseConfigData(config_str, "Pers XML");
+            else if (opt_hex.checked)
+                config = parseConfigData(config_str, "HEX");
+            else if (opt_c_hex.checked)
+                config = parseConfigData(config_str, "C HEX");
+            
+            if (config.length == 128)
+                setConfig(config);
+        }
+        
+        function configInputOnBlur(event)
+        {
+            if (!event.target.is_parsed_ok)
+                return;
+            
+            var config_params = parseConfigID(event.target.id);
+            if (!config_params)
+            {
+                console.log("id=" + event.target.id + " - Unable to parse input id");
+                return;
+            }
+            syncConfigToDisplay(config_params.byte_offset, config_params.byte_count, null);
+        }
+        
+        function configInputCheckboxChange(event)
+        {
+            event.target.is_parsed_ok = true;
+            
+            var config_params = parseConfigID(event.target.id);
+            if (!config_params)
+            {
+                console.log("id=" + event.target.id + " - Unable to parse input id");
+                return;
+            }
+            
+            var new_value = event.target.checked ? 1 : 0;
+            
+            setConfigValue(config_params, new_value, null);
+        }
+        
+        function configInputRadioChange(event)
+        {
+            event.target.is_parsed_ok = false;
+            
+            var config_params = parseConfigID(event.target.id);
+            if (!config_params)
+            {
+                console.log("id=" + event.target.id + " - Unable to parse input id");
+                return;
+            }
+            
+            var new_value = null;
+            var radio_group = document.getElementsByName(event.target.name);
+            for (var i = 0; i < radio_group.length; i++)
+            {
+                if (radio_group[i].type != "radio")
+                    continue; // Checkbox from the slot editor is getting caught, so this skips it
+                if (radio_group[i].checked)
+                {
+                    var curr_config_params = parseConfigID(radio_group[i].id);
+                    if (!config_params)
+                    {
+                        console.log("id=" + event.target.id + " - Unable to parse input id");
+                        return;
+                    }
+                    
+                    new_value = curr_config_params.radio_value;
+                }
+            }
+            
+            if (new_value == null)
+            {
+                console.log("id=" + event.target.id + " - No checked button in radio group");
+                return;
+            }
+            
+            event.target.is_parsed_ok = true;
+            
+            setConfigValue(config_params, new_value, null);
+        }
+        
+        function toggleDetails(event)
+        {
+            var element = event.target.nextElementSibling;
+            while (element)
+            {
+                if (element.className == "details")
+                {
+                    if (window.getComputedStyle(element).display == "none")
+                    {
+                        element.style.display = "block";
+                        event.target.innerHTML = "hide details";
+                    }
+                    else
+                    {
+                        element.style.display = "none";
+                        event.target.innerHTML = "show details";
+                    }                    
+                }
+                element = element.nextElementSibling;
+            }
+        }
+        
+        function setComment(comment_textarea)
+        {
+            var field_name = /^(.+)-comments$/.exec(comment_textarea.id)[1];
+            g_comments[field_name] = comment_textarea.value;
+            syncExport();
+            syncComments(comment_textarea);
+        }
+        
+        function generateMessagesECC508A(config_data)
+        {
+            var messages = [];
+            var value = 0;
+            
+            if (getConfigValue(ECC508A_I2CENABLE_MODE, config_data))
+            {
+                // I2C Mode
+                if (getConfigValue(ECC508A_I2CADDRESS_ADDRESS, config_data) & 0x01 != 0)
+                    addMsgError(messages, ECC508A_I2CADDRESS_ADDRESS, "LSB must be 0.");
+            }
+            else
+            {
+                // SWI Mode
+                var gpio_mode = getConfigValue(ECC508A_I2CADDRESS_GPIOMODE, config_data);
+                if (gpio_mode != 3)
+                    addMsgNote(messages, ECC508A_I2CADDRESS_GPIODEFSTATE, "Ignored because GPIO Mode is not set to [11] Authorization mode.");
+                if (gpio_mode != 1)
+                {
+                    if (getConfigValue(ECC508A_I2CADDRESS_GPIOAUTHMODE, config_data) != 0)
+                        addMsgError(messages, ECC508A_I2CADDRESS_GPIOAUTHMODE, "Must be 0 if GPIO Mode is not set to [01] Authorization mode.");
+                    if (getConfigValue(ECC508A_I2CADDRESS_GPIOSIGNALKEY, config_data) != 0)
+                        addMsgError(messages, ECC508A_I2CADDRESS_GPIOSIGNALKEY, "Must be 0 if GPIO Mode is not set to [01] Authorization mode.");
+                }
+            }
+            
+            if (getConfigValue(ECC508A_RESERVED17, config_data) != 0)
+                addMsgError(messages, ECC508A_RESERVED17, "Must be 0.");
+                
+            value = getConfigValue(ECC508A_OTPMODE, config_data);
+            if (value != 0xAA && value != 0x55)
+                addMsgError(messages, ECC508A_OTPMODE, "Must be 0xAA or 0x55.");
+            
+            if (getConfigValue(ECC508A_CHIPMODE_RESERVED, config_data) != 0)
+                addMsgError(messages, ECC508A_CHIPMODE_RESERVED, "Reserved (bits 3-7) must be 0.");
+                
+            for (var slot = 0; slot < 15; slot++)
+            {
+                var is_private = getConfigValue(ECC508A_KEYCONFIG[slot].PRIVATE, config_data);
+                var read_mode = getConfigValue(ECC508A_SLOTCONFIG[slot].READMODE, config_data);
+                
+                if (!is_private)
+                {
+                    if (read_mode == 0)
+                        addMsgNote(messages, ECC508A_SLOTCONFIG[slot].READKEY, "Ignored since read permissions indicate a clear-text read.");
+                    else if ((read_mode == 2 || read_mode == 3) && getConfigValue(ECC508A_SLOTCONFIG[slot].READKEY, config_data) == 0)
+                        addMsgWarning(messages, ECC508A_SLOTCONFIG[slot].READKEY, "Only set this to 0 if the CheckMAC/Copy capability is required.");
+                    else if (read_mode == 2)
+                        addMsgNote(messages, ECC508A_SLOTCONFIG[slot].READKEY, "Ignored since read permissions disable reads.");
+                    else if (read_mode == 3 && getConfigValue(ECC508A_SLOTCONFIG[slot].READKEY, config_data) == slot)
+                        addMsgWarning(messages, ECC508A_SLOTCONFIG[slot].READKEY, "Probably don't want the read key ID set to itself.");
+                }
+            }
+            
+            var count_enc = g_config_data.slice(ECC508A_LASTKEYUSE.byte_offset, ECC508A_LASTKEYUSE.byte_offset + ECC508A_LASTKEYUSE.byte_count);
+            var count_num = decodeLastKeyUse(count_enc);
+            var count_enc_check = encodeLastKeyUse(count_num);
+            var is_ok = count_enc.equals(count_enc_check);
+            if (getConfigValue(ECC508A_SLOTCONFIG[15].LIMITEDUSE, config_data))
+            {
+                if (!is_ok)
+                {
+                    addMsgWarning(messages, ECC508A_LASTKEYUSE, "LastKeyUse format is incorrect. Counter may behave unpredictably.");
+                    addMsgWarning(messages, ECC508A_SLOTCONFIG[15].LIMITEDUSE, "This flag uses the LastKeyUse field, but its format is invalid.");
+                }
+                else if (count_num <= 0)
+                {
+                    addMsgWarning(messages, ECC508A_LASTKEYUSE, "The key in slot 15 can't be used any more.");
+                    addMsgWarning(messages, ECC508A_SLOTCONFIG[15].LIMITEDUSE, "LastKeyUse indicates this slot can't be used any more.");
+                }
+                else
+                {
+                    addMsgNote(messages, ECC508A_SLOTCONFIG[15].LIMITEDUSE, "LastKeyUse indicates this slot can be used " + count_num + " time"+(count_num != 1 ? "s" : "") + ".");
+                }
+            }
+            else
+            {
+                addMsgNote(messages, ECC508A_LASTKEYUSE, "SlotConfig[15].LimitedUse isn't set, so this field is ignored.");
+                if (!is_ok)
+                    addMsgWarning(messages, ECC508A_LASTKEYUSE, "LastKeyUse format is incorrect.  Counter may behave unpredictably.");
+            }
+            
+            for (var counter_id = 0; counter_id < 2; counter_id++)
+            {
+                var count_enc = g_config_data.slice(ECC508A_COUNTER[counter_id].byte_offset, ECC508A_COUNTER[counter_id].byte_offset + ECC508A_COUNTER[counter_id].byte_count);
+                var count_num = decodeCounter(count_enc);
+                var count_enc_check = encodeCounter(count_num);
+                
+                if (!count_enc.equals(count_enc_check))
+                    addMsgWarning(messages, ECC508A_COUNTER[counter_id], "Counter format is invalid. Counter may behave unpredictably.");
+            }
+            
+            if (getConfigValue(ECC508A_SLOTLOCKED, config_data) != 0xFFFF)
+                addMsgWarning(messages, ECC508A_SLOTLOCKED, "Do not set any SlotLocked bit to 0 in the initial configuration. It will effectively prevent the slot from being used for any purpose.");
+            
+            return messages;
+        }
+    
+    //]]>
+    </script>
+    
+    <script type="text/javascript">
+    //<![CDATA[
+        /* Modernizr 2.8.3 (Custom Build) | MIT & BSD
+         * Build: http://modernizr.com/download/#-csscolumns-generatedcontent-csstransforms-input-inputtypes-inlinesvg-svg-shiv-cssclasses-teststyles-testprop-testallprops-domprefixes-load
+         */
+        ;window.Modernizr=function(a,b,c){function A(a){j.cssText=a}function B(a,b){return A(prefixes.join(a+";")+(b||""))}function C(a,b){return typeof a===b}function D(a,b){return!!~(""+a).indexOf(b)}function E(a,b){for(var d in a){var e=a[d];if(!D(e,"-")&&j[e]!==c)return b=="pfx"?e:!0}return!1}function F(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:C(f,"function")?f.bind(d||b):f}return!1}function G(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+o.join(d+" ")+d).split(" ");return C(b,"string")||C(b,"undefined")?E(e,b):(e=(a+" "+p.join(d+" ")+d).split(" "),F(e,b,c))}function H(){e.input=function(c){for(var d=0,e=c.length;d<e;d++)t[c[d]]=c[d]in k;return t.list&&(t.list=!!b.createElement("datalist")&&!!a.HTMLDataListElement),t}("autocomplete autofocus list placeholder max min multiple pattern required step".split(" ")),e.inputtypes=function(a){for(var d=0,e,f,h,i=a.length;d<i;d++)k.setAttribute("type",f=a[d]),e=k.type!=="text",e&&(k.value=l,k.style.cssText="position:absolute;visibility:hidden;",/^range$/.test(f)&&k.style.WebkitAppearance!==c?(g.appendChild(k),h=b.defaultView,e=h.getComputedStyle&&h.getComputedStyle(k,null).WebkitAppearance!=="textfield"&&k.offsetHeight!==0,g.removeChild(k)):/^(search|tel)$/.test(f)||(/^(url|email)$/.test(f)?e=k.checkValidity&&k.checkValidity()===!1:e=k.value!=l)),s[a[d]]=!!e;return s}("search tel url email datetime date month week time datetime-local number range color".split(" "))}var d="2.8.3",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k=b.createElement("input"),l=":)",m={}.toString,n="Webkit Moz O ms",o=n.split(" "),p=n.toLowerCase().split(" "),q={svg:"http://www.w3.org/2000/svg"},r={},s={},t={},u=[],v=u.slice,w,x=function(a,c,d,e){var f,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:h+(d+1),l.appendChild(j);return f=["&#173;",'<style id="s',h,'">',a,"</style>"].join(""),l.id=h,(m?l:n).innerHTML+=f,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=g.style.overflow,g.style.overflow="hidden",g.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),g.style.overflow=k),!!i},y={}.hasOwnProperty,z;!C(y,"undefined")&&!C(y.call,"undefined")?z=function(a,b){return y.call(a,b)}:z=function(a,b){return b in a&&C(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=v.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(v.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(v.call(arguments)))};return e}),r.csscolumns=function(){return G("columnCount")},r.csstransforms=function(){return!!G("transform")},r.generatedcontent=function(){var a;return x(["#",h,"{font:0/0 a}#",h,':after{content:"',l,'";visibility:hidden;font:3px/1 a}'].join(""),function(b){a=b.offsetHeight>=3}),a},r.svg=function(){return!!b.createElementNS&&!!b.createElementNS(q.svg,"svg").createSVGRect},r.inlinesvg=function(){var a=b.createElement("div");return a.innerHTML="<svg/>",(a.firstChild&&a.firstChild.namespaceURI)==q.svg};for(var I in r)z(r,I)&&(w=I.toLowerCase(),e[w]=r[I](),u.push((e[w]?"":"no-")+w));return e.input||H(),e.addTest=function(a,b){if(typeof a=="object")for(var d in a)z(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" "+(b?"":"no-")+a),e[a]=b}return e},A(""),i=k=null,function(a,b){function l(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function m(){var a=s.elements;return typeof a=="string"?a.split(" "):a}function n(a){var b=j[a[h]];return b||(b={},i++,a[h]=i,j[i]=b),b}function o(a,c,d){c||(c=b);if(k)return c.createElement(a);d||(d=n(c));var g;return d.cache[a]?g=d.cache[a].cloneNode():f.test(a)?g=(d.cache[a]=d.createElem(a)).cloneNode():g=d.createElem(a),g.canHaveChildren&&!e.test(a)&&!g.tagUrn?d.frag.appendChild(g):g}function p(a,c){a||(a=b);if(k)return a.createDocumentFragment();c=c||n(a);var d=c.frag.cloneNode(),e=0,f=m(),g=f.length;for(;e<g;e++)d.createElement(f[e]);return d}function q(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return s.shivMethods?o(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+m().join().replace(/[\w\-]+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(s,b.frag)}function r(a){a||(a=b);var c=n(a);return s.shivCSS&&!g&&!c.hasCSS&&(c.hasCSS=!!l(a,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),k||q(a,c),a}var c="3.7.0",d=a.html5||{},e=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,f=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,g,h="_html5shiv",i=0,j={},k;(function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",g="hidden"in a,k=a.childNodes.length==1||function(){b.createElement("a");var a=b.createDocumentFragment();return typeof a.cloneNode=="undefined"||typeof a.createDocumentFragment=="undefined"||typeof a.createElement=="undefined"}()}catch(c){g=!0,k=!0}})();var s={elements:d.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output progress section summary template time video",version:c,shivCSS:d.shivCSS!==!1,supportsUnknownElements:k,shivMethods:d.shivMethods!==!1,type:"default",shivDocument:r,createElement:o,createDocumentFragment:p};a.html5=s,r(b)}(this,b),e._version=d,e._domPrefixes=p,e._cssomPrefixes=o,e.testProp=function(a){return E([a])},e.testAllProps=G,e.testStyles=x,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" js "+u.join(" "):""),e}(this,this.document),function(a,b,c){function d(a){return"[object Function]"==o.call(a)}function e(a){return"string"==typeof a}function f(){}function g(a){return!a||"loaded"==a||"complete"==a||"uninitialized"==a}function h(){var a=p.shift();q=1,a?a.t?m(function(){("c"==a.t?B.injectCss:B.injectJs)(a.s,0,a.a,a.x,a.e,1)},0):(a(),h()):q=0}function i(a,c,d,e,f,i,j){function k(b){if(!o&&g(l.readyState)&&(u.r=o=1,!q&&h(),l.onload=l.onreadystatechange=null,b)){"img"!=a&&m(function(){t.removeChild(l)},50);for(var d in y[c])y[c].hasOwnProperty(d)&&y[c][d].onload()}}var j=j||B.errorTimeout,l=b.createElement(a),o=0,r=0,u={t:d,s:c,e:f,a:i,x:j};1===y[c]&&(r=1,y[c]=[]),"object"==a?l.data=c:(l.src=c,l.type=a),l.width=l.height="0",l.onerror=l.onload=l.onreadystatechange=function(){k.call(this,r)},p.splice(e,0,u),"img"!=a&&(r||2===y[c]?(t.insertBefore(l,s?null:n),m(k,j)):y[c].push(l))}function j(a,b,c,d,f){return q=0,b=b||"j",e(a)?i("c"==b?v:u,a,b,this.i++,c,d,f):(p.splice(this.i++,0,a),1==p.length&&h()),this}function k(){var a=B;return a.loader={load:j,i:0},a}var l=b.documentElement,m=a.setTimeout,n=b.getElementsByTagName("script")[0],o={}.toString,p=[],q=0,r="MozAppearance"in l.style,s=r&&!!b.createRange().compareNode,t=s?l:n.parentNode,l=a.opera&&"[object Opera]"==o.call(a.opera),l=!!b.attachEvent&&!l,u=r?"object":l?"script":"img",v=l?"script":u,w=Array.isArray||function(a){return"[object Array]"==o.call(a)},x=[],y={},z={timeout:function(a,b){return b.length&&(a.timeout=b[0]),a}},A,B;B=function(a){function b(a){var a=a.split("!"),b=x.length,c=a.pop(),d=a.length,c={url:c,origUrl:c,prefixes:a},e,f,g;for(f=0;f<d;f++)g=a[f].split("="),(e=z[g.shift()])&&(c=e(c,g));for(f=0;f<b;f++)c=x[f](c);return c}function g(a,e,f,g,h){var i=b(a),j=i.autoCallback;i.url.split(".").pop().split("?").shift(),i.bypass||(e&&(e=d(e)?e:e[a]||e[g]||e[a.split("/").pop().split("?")[0]]),i.instead?i.instead(a,e,f,g,h):(y[i.url]?i.noexec=!0:y[i.url]=1,f.load(i.url,i.forceCSS||!i.forceJS&&"css"==i.url.split(".").pop().split("?").shift()?"c":c,i.noexec,i.attrs,i.timeout),(d(e)||d(j))&&f.load(function(){k(),e&&e(i.origUrl,h,g),j&&j(i.origUrl,h,g),y[i.url]=2})))}function h(a,b){function c(a,c){if(a){if(e(a))c||(j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}),g(a,j,b,0,h);else if(Object(a)===a)for(n in m=function(){var b=0,c;for(c in a)a.hasOwnProperty(c)&&b++;return b}(),a)a.hasOwnProperty(n)&&(!c&&!--m&&(d(j)?j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}:j[n]=function(a){return function(){var b=[].slice.call(arguments);a&&a.apply(this,b),l()}}(k[n])),g(a[n],j,b,n,h))}else!c&&l()}var h=!!a.test,i=a.load||a.both,j=a.callback||f,k=j,l=a.complete||f,m,n;c(h?a.yep:a.nope,!!i),i&&c(i)}var i,j,l=this.yepnope.loader;if(e(a))g(a,0,l,0);else if(w(a))for(i=0;i<a.length;i++)j=a[i],e(j)?g(j,0,l,0):w(j)?B(j):Object(j)===j&&h(j,l);else Object(a)===a&&h(a,l)},B.addPrefix=function(a,b){z[a]=b},B.addFilter=function(a){x.push(a)},B.errorTimeout=1e4,null==b.readyState&&b.addEventListener&&(b.readyState="loading",b.addEventListener("DOMContentLoaded",A=function(){b.removeEventListener("DOMContentLoaded",A,0),b.readyState="complete"},0)),a.yepnope=k(),a.yepnope.executeStack=h,a.yepnope.injectJs=function(a,c,d,e,i,j){var k=b.createElement("script"),l,o,e=e||B.errorTimeout;k.src=a;for(o in d)k.setAttribute(o,d[o]);c=j?h:c||f,k.onreadystatechange=k.onload=function(){!l&&g(k.readyState)&&(l=1,c(),k.onload=k.onreadystatechange=null)},m(function(){l||(l=1,c(1))},e),i?k.onload():n.parentNode.insertBefore(k,n)},a.yepnope.injectCss=function(a,c,d,e,g,i){var e=b.createElement("link"),j,c=i?h:c||f;e.href=a,e.rel="stylesheet",e.type="text/css";for(j in d)e.setAttribute(j,d[j]);g||(n.parentNode.insertBefore(e,n),m(c,0))}}(this,document),Modernizr.load=function(){yepnope.apply(window,[].slice.call(arguments,0))};
+    //]]>
+    </script>
+</html>

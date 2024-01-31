@@ -1,0 +1,145 @@
+    1  sudo su
+    2  exit
+    3  sudo su
+    4  ls
+    5  cd /home
+    6  ls
+    7  cd pi
+    8  ls
+    9  shutdown now
+   10  sudo su
+   11  exit
+   12  sudo su
+   13  reboot now
+   14  sudo reboot now
+   15  sudo su
+   16  cd Desktop/
+   17  ls
+   18  chown pi:pi *.*
+   19  ls
+   20  chmod +x *.*
+   21  sudo su
+   22  crontab -e
+   23  sudo su
+   24  exit
+   25  sudo su
+   26  exit
+   27  sudo su
+   28  cd deployment
+   29  cd deploy
+   30  sudo su
+   31  md hexfiles
+   32  mkdir hexfile
+   33  cd hexfile
+   34  mv *.txt *.hex
+   35  ls *.hex
+   36  ls
+   37  mv BT-000314-01-A.txt BT-000314-01-A.hex
+   38  mv BT-000314-01-B.txt BT-000314-01-B.hex
+   39  mv BT-000314-01-C.txt BT-000314-01-C.hex
+   40  mv BT-000314-01-D.txt BT-000314-01-D.hex
+   41  mv BT-000314-01-E.txt BT-000314-01-E.hex
+   42  mv BT-000314-01-F.txt BT-000314-01-F.hex
+   43  zip *.* hex.zip
+   44  sudo su
+   45  exit
+   46  sudo su
+   47  exit
+   48  sudo su
+   49  exit
+   50  sudo su
+   51  mkdir mc32
+   52  cd mc32
+   53  unzip 2020-07-24-00.zip 
+   54  python3 main.py
+   55  cd database
+   56  ls
+   57  cd ..
+   58  sudosu
+   59  sudo su
+   60  exit
+   61  sudo su
+   62  exit
+   63  sudo su
+   64  cd zebrabattst/
+   65  cd devan/
+   66  ls
+   67  ls -l
+   68  sudo chown pi ./
+   69  sudo chown -R pi ./
+   70  ls
+   71  ls -l
+   72  chmod -R u+w ./
+   73  ls -l
+   74  cd lib
+   75  ls
+   76  ls -l
+   77  python3
+   78  cd /usr/lib/python3.7/
+   79  ls
+   80  ls sit*
+   81  vim ee.pth
+   82  sudo apt-get install vim
+   83  nano ee.pth
+   84  sudo nano ee.pth
+   85  python
+   86  python3
+   87  ls
+   88  cat ee
+   89  cat ee.pth 
+   90  ls /home/pi/zebrabattst/devan/lib
+   91  python3
+   92  env
+   93  echo $PYTHON_PATH
+   94  echo $PYTHONPATH
+   95  echo $PATH
+   96  export PYTHONPATH=/home/pi/zebrabattst/devan/lib
+   97  echo $PYTHONPATH
+   98  python3
+   99  python3 -m ee.equipment.linux_smbdat
+  100  pip3 install smbus2
+  101  python3 -m ee.equipment.linux_smbdat
+  102  python3
+  103  cd ~/zebrabattst/devan/lib/ee/equipment/
+  104  ;s
+  105  ls
+  106  nano linux_smbdat.py 
+  107  python3
+  108  cd ..
+  109  ls
+  110  python3 zBat_GG_Rb_data.py 
+  111  python3
+  112  clear
+  113  python3
+  114  python3 zBat_GG_Rb_data.py 
+  115  ls
+  116  python3
+  117  python3 zBat_GG_Rb_data.py 
+  118  python3
+  119  python3 zBat_GG_Rb_data.py 
+  120  sudo nano /boot/config.txt 
+  121  exit
+  122  python3
+  123  history
+  124  vim ~/zebrabattst/devan/lib/ee/equipment/linux_smbdat.py 
+  125  python3 zBat_GG_Rb_data.py 
+  126  cd zebrabattst/devan/
+  127  python3 zBat_GG_Rb_data.py 
+  128  history | grep PYTHON
+  129  export PYTHONPATH=/home/pi/zebrabattst/devan/lib
+  130  python3 zBat_GG_Rb_data.py 
+  131  vim ~/zebrabattst/devan/lib/ee/equipment/linux_smbdat.py 
+  132  vim ~/zebrabattst/devan/lib/ee/equipment/bq28z610.py 
+  133  ls
+  134  vim zBat_GG_Rb_data.py 
+  135  python3 zBat_GG_Rb_data.py 
+  136  python3
+  137  vim zBat_GG_Rb_data.py 
+  138  ls
+  139  export PYTHONPATH=/home/pi/zebrabattst/devan/lib
+  140  python3 zBat_GG_Rb_data.py 
+  141  vim zBat_GG_Rb_data.py 
+  142  python3
+  143  ls
+  144  vim zBat_GG_Rb_data.py 
+  145  history > deven.his

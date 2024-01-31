@@ -1,0 +1,20 @@
+Test batt 1
+Part number: BT-000442-00%3   Serial Num: T0039   Date Made: 7/14/2021
+Device: 1561
+Version: 0201
+Build: 0013
+Type: 02
+IT Ver: 0475
+
+Test batt 2
+art number: BT-000442-00%3   Serial Num: T0030   Date Made: 7/14/2021
+Device: 1561
+Version: 0201
+Build: 0013
+Type: 02
+IT Ver: 0475
+
+
+
+3e84e1b2
+62501b40

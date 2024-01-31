@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name IO-Board-rescue)(type Legacy)(uri "${KIPRJMOD}/IO Board-rescue.lib")(options "")(descr ""))
+  (lib (name BattProg)(type Legacy)(uri "${KIPRJMOD}/BattProg.lib")(options "")(descr ""))
+)
